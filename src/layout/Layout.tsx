@@ -1,24 +1,29 @@
 import { Outlet, Link } from "react-router-dom";
-
+import BottomNav from "../navigator/BottonNav";
+import logo from "../assets/images/headerLogo.png";
+import { VscBell } from "react-icons/vsc";
 function Layout() {
   return (
     <div className="flex flex-col mx-auto w-full max-w-md min-h-screen bg-white shadow-lg">
       {/* 상단 네비게이션 */}
-      <header className="bg-main text-white p-4">
-        <nav className="flex gap-4">
+      <header className="bg-white border-b border-gray-200 p-4 py-5">
+        <nav className="flex justify-between gap-4">
           <Link to="/" className="hover:underline">
-            홈
+            <img src={logo} alt="로고" className="w-12 h-auto" />
           </Link>
+          <VscBell className="w-6 h-6" />
         </nav>
       </header>
 
       {/* 페이지 컨텐츠 */}
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-2">
         <Outlet />
       </main>
 
       {/* 하단 푸터 */}
-      <footer className="bg-gray-100 text-center p-8 border-t-1 border-gray-200"></footer>
+      <footer>
+        <BottomNav />
+      </footer>
     </div>
   );
 }
