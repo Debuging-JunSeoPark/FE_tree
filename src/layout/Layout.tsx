@@ -1,4 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
+import BottomNav from "../navigator/BottonNav";
 
 function Layout() {
   return (
@@ -18,7 +19,9 @@ function Layout() {
       </main>
 
       {/* 하단 푸터 */}
-      <footer className="bg-gray-100 text-center p-8 border-t-1 border-gray-200"></footer>
+      <footer>
+        <BottomNav />
+      </footer>
     </div>
   );
 }
