@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Record from "./pages/Record";
 import Report from "./pages/Report";
 import Mypage from "./pages/Mypage";
+import SelectAvatar from "./pages/SelectAvatar";
 
 function App() {
   const router = createBrowserRouter([
@@ -21,6 +22,10 @@ function App() {
     {
       path: "/login",
       element: <Login />, // ✅ Layout 없이 별도 라우트로
+    },
+    {
+      path: "/select-character",
+      element: <SelectAvatar />,
     },
   ]);
   return (
