@@ -52,3 +52,17 @@ export default tseslint.config({
   },
 })
 ```
+
+
+## 📦 Installed Packages
+
+| Package      | Purpose                        |
+|--------------|--------------------------------|
+| swiper       | Week chart swipe interaction   |
+| recharts     | Weekly area chart (data vis)   |
+| tailwindcss  | Utility-first CSS framework    |
+
+### Installation
+```bash
+npm install swiper recharts
+
