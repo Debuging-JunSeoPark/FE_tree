@@ -12,20 +12,23 @@ function Weekly() {
     };
   });
   return (
-    <div className="flex flex-row items-center justify-center gap-2">
-      {week.map((day, index) => (
-        <div
-          key={index}
-          className={`flex flex-col items-center rounded-2xl p-1 w-11.5 h-17 font-PBold ${
-            day.isToday ? "bg-main text-white" : "bg-white text-Title"
-          }`}
-        >
-          <div>{day.label}</div>
-          <div className="flex items-center justify-center rounded-4xl bg-[#d9d9d9] text-white  w-8 h-8">
-            {day.date}
+    <div className="flex flex-col m-1">
+      <div className="font-PBlack text-2xl">{format(date, "yyyy MMM")}</div>
+      <div className="flex flex-row items-center justify-center gap-2">
+        {week.map((day, index) => (
+          <div
+            key={index}
+            className={`flex flex-col items-center rounded-2xl p-1 w-11.5 h-17 font-PBold ${
+              day.isToday ? "bg-main text-white" : "bg-white text-Title"
+            }`}
+          >
+            <div>{day.label}</div>
+            <div className="flex items-center justify-center rounded-4xl bg-[#d9d9d9] text-white  w-8 h-8">
+              {day.date}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
