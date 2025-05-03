@@ -1,4 +1,10 @@
+import Weekly from "../components/Weekly";
+
 function Record() {
-  return <></>;
+  return (
+    <div>
+      <Weekly />
+    </div>
+  );
 }
 export default Record;
