@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import WordCloud, { Word } from "../components/WordCloud"; // ⬅️ 추가
 
 type DayData = { day: string; count: number };
 type WeekKey = "2025 Apr week1" | "2025 Apr week2" | "2025 Apr week3";
@@ -44,6 +45,53 @@ const dummyWeeklyData: Record<WeekKey, DayData[]> = {
   ],
 };
 
+const dummyWordData: Record<WeekKey, Word[]> = {
+  "2025 Apr week1": [
+    { text: "happy", value: 4000 },
+    { text: "focus", value: 3000 },
+    { text: "energy", value: 2400 },
+    { text: "calm", value: 2000 },
+    { text: "tired", value: 1600 },
+    { text: "excited", value: 600 },
+    { text: "motivated", value: 400 },
+    { text: "rest", value: 200 },
+    { text: "happy", value: 4000 },
+    { text: "focus", value: 3000 },
+    { text: "energy", value: 2400 },
+    { text: "calm", value: 2000 },
+    { text: "tired", value: 1600 },
+    { text: "excited", value: 600 },
+    { text: "motivated", value: 400 },
+    { text: "rest", value: 200 },
+    { text: "happy", value: 4000 },
+    { text: "focus", value: 3000 },
+    { text: "energy", value: 2400 },
+    { text: "calm", value: 2000 },
+    { text: "tired", value: 1600 },
+    { text: "excited", value: 600 },
+    { text: "motivated", value: 400 },
+    { text: "rest", value: 200 },
+    { text: "happy", value: 4000 },
+    { text: "focus", value: 3000 },
+    { text: "energy", value: 2400 },
+    { text: "calm", value: 2000 },
+    { text: "tired", value: 1600 },
+    { text: "excited", value: 600 },
+    { text: "motivated", value: 400 },
+    { text: "rest", value: 200 },
+  ],
+  "2025 Apr week2": [
+    { text: "tired", value: 9 },
+    { text: "work", value: 7 },
+    { text: "goal", value: 4 },
+  ],
+  "2025 Apr week3": [
+    { text: "fun", value: 12 },
+    { text: "game", value: 6 },
+    { text: "rest", value: 5 },
+  ],
+};
+
 const weekKeys = Object.keys(dummyWeeklyData) as WeekKey[];
 
 function ReportWeekly() {
@@ -55,8 +103,10 @@ function ReportWeekly() {
         {weekKeys[activeIndex]}
       </h2>
 
-      {/* ➕ Daily Progress Details 텍스트 */}
-      <p className="text-sm text-gray-700 mb-2 text-left font-PMedium">Daily Progress Details</p>
+      <p className="text-left text-base font-PMedium text-gray-800 mb-2">
+        Daily Progress Details
+      </p>
+
 
       <Swiper
         spaceBetween={30}
@@ -67,56 +117,61 @@ function ReportWeekly() {
       >
         {weekKeys.map((week, idx) => (
           <SwiperSlide key={week}>
-          <div className="w-full max-w-[600px] h-[220px] bg-white rounded border border-gray-200 shadow-md p-4">
-            <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-      data={dummyWeeklyData[week]}
-      margin={{ top: 10, right: 30, left: -30, bottom: 0 }} 
-    >
-                  <defs>
-                    <linearGradient
-                      id={`colorCount-${idx}`}
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor="#0F9D58"
-                        stopOpacity={0.8}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="#FFFED9"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="day"
-                    ticks={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
-                  />
-                  <YAxis
-                    domain={[0, 3]}
-                    ticks={[0, 1, 2, 3]}
-                    allowDecimals={false}
-                  />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#0F9D58"
-                    fillOpacity={1}
-                    fill={`url(#colorCount-${idx})`}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="w-full max-w-[600px] mx-auto">
+              <div className="h-[220px] bg-white rounded border border-gray-200 shadow-md p-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart
+                    data={dummyWeeklyData[week]}
+                    margin={{ top: 10, right: 30, left: -30, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id={`colorCount-${idx}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="5%" stopColor="#0F9D58" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#FFFED9" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="day"
+                      ticks={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
+                    />
+                    <YAxis
+                      domain={[0, 3]}
+                      ticks={[0, 1, 2, 3]}
+                      allowDecimals={false}
+                    />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#0F9D58"
+                      fillOpacity={1}
+                      fill={`url(#colorCount-${idx})`}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* ✅ 워드 클라우드 추가 */}
+              <div className="mt-6">
+                <p className="text-left text-base font-PMedium text-gray-800 mb-2">
+                  Frequently used words
+                </p>
+                <div className="h-[200px] bg-white rounded border border-gray-200 shadow-md p-4">
+                  <WordCloud words={dummyWordData[week]} />
+                </div>
+              </div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
+
     </div>
   );
 }
