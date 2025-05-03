@@ -6,8 +6,20 @@ import Record from "./pages/Record";
 import Report from "./pages/Report";
 import Mypage from "./pages/Mypage";
 import SelectAvatar from "./pages/SelectAvatar";
+import Splash from "./pages/Splash";
+import { useEffect, useState } from "react";
+import StartScreen from "./pages/StartScreen";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // 2초 후에 로딩 상태 변경
+
+    return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 정리
+  }, []);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -27,7 +39,12 @@ function App() {
       path: "/select-character",
       element: <SelectAvatar />,
     },
+    {
+      path: "/start",
+      element: <StartScreen />,
+    },
   ]);
+  if (loading) return <Splash />;
   return (
     <div>
       <RouterProvider router={router} />

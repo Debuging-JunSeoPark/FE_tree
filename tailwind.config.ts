@@ -5,16 +5,14 @@ const config: Config = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        PThin: ["Pretendard-Thin"],
-        PExtraLight: ["Pretendard-ExtraLight"],
-        PLight: ["Pretendard-Light"],
-        PRegular: ["Pretendard-Regular"],
-        PMedium: ["Pretendard-Medium"],
-        PSemiBold: ["Pretendard-SemiBold"],
-        PBold: ["Pretendard-Bold"],
-        PExtraBold: ["Pretendard-ExtraBold"],
-        PBlack: ["Pretendard-Black"],
+      keyframes: {
+        slideUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        "slide-up": "slideUp 1s ease-out",
       },
     },
   },
