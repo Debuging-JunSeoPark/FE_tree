@@ -56,13 +56,16 @@ export default tseslint.config({
 
 ## 📦 Installed Packages
 
-| Package      | Purpose                        |
-|--------------|--------------------------------|
-| swiper       | Week chart swipe interaction   |
-| recharts     | Weekly area chart (data vis)   |
-| tailwindcss  | Utility-first CSS framework    |
+| Package      | Purpose                                |
+|--------------|----------------------------------------|
+| swiper       | Week chart swipe interaction           |
+| recharts     | Weekly area chart (data vis)           |
+| tailwindcss  | Utility-first CSS framework            |
+| date-fns     | Date formatting and manipulation utils |
+| wordcloud    | Word cloud rendering on `<canvas>`     |
 
 ### Installation
-```bash
-npm install swiper recharts
 
+```bash
+npm install swiper recharts date-fns wordcloud
+```
