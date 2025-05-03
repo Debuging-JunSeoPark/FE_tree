@@ -10,7 +10,8 @@ import {
 } from "recharts";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import WordCloud, { Word } from "../components/WordCloud"; // ⬅️ 추가
+import WordCloud, { Word } from "../components/WordCloud"; // 추가
+import { extractWordFrequency } from "../utils/extractWordFrequency";
 
 type DayData = { day: string; count: number };
 type WeekKey = "2025 Apr week1" | "2025 Apr week2" | "2025 Apr week3";
@@ -44,61 +45,42 @@ const dummyWeeklyData: Record<WeekKey, DayData[]> = {
     { day: "Sun", count: 1 },
   ],
 };
-
-const dummyWordData: Record<WeekKey, Word[]> = {
-  "2025 Apr week1": [
-    { text: "happy", value: 4000 },
-    { text: "focus", value: 3000 },
-    { text: "energy", value: 2400 },
-    { text: "calm", value: 2000 },
-    { text: "tired", value: 1600 },
-    { text: "excited", value: 600 },
-    { text: "motivated", value: 400 },
-    { text: "rest", value: 200 },
-    { text: "happy", value: 4000 },
-    { text: "focus", value: 3000 },
-    { text: "energy", value: 2400 },
-    { text: "calm", value: 2000 },
-    { text: "tired", value: 1600 },
-    { text: "excited", value: 600 },
-    { text: "motivated", value: 400 },
-    { text: "rest", value: 200 },
-    { text: "happy", value: 4000 },
-    { text: "focus", value: 3000 },
-    { text: "energy", value: 2400 },
-    { text: "calm", value: 2000 },
-    { text: "tired", value: 1600 },
-    { text: "excited", value: 600 },
-    { text: "motivated", value: 400 },
-    { text: "rest", value: 200 },
-    { text: "happy", value: 4000 },
-    { text: "focus", value: 3000 },
-    { text: "energy", value: 2400 },
-    { text: "calm", value: 2000 },
-    { text: "tired", value: 1600 },
-    { text: "excited", value: 600 },
-    { text: "motivated", value: 400 },
-    { text: "rest", value: 200 },
-  ],
-  "2025 Apr week2": [
-    { text: "tired", value: 9 },
-    { text: "work", value: 7 },
-    { text: "goal", value: 4 },
-  ],
-  "2025 Apr week3": [
-    { text: "fun", value: 12 },
-    { text: "game", value: 6 },
-    { text: "rest", value: 5 },
-  ],
+const dummyTextData: Record<WeekKey, string> = {
+  "2025 Apr week1": `
+    This week was a rollercoaster of emotions. I started off feeling incredibly happy and focused, 
+    diving into work with energy and enthusiasm. By midweek, I was slightly tired, but still 
+    motivated to keep pushing forward. I took breaks to stay calm and reflect on my progress. 
+    The weekend brought a sense of excitement, and I allowed myself to rest, recover, and 
+    recharge for the next week ahead.`,
+    
+  "2025 Apr week2": `
+    Workload increased significantly this week. I felt tired and overwhelmed at times, 
+    but I reminded myself of the goals I had set earlier in the month. Despite the stress, 
+    I managed to stay organized and maintain a steady rhythm. I tried meditating in the evenings 
+    to regain focus and reduce anxiety. Rest was my top priority over the weekend.`,
+    
+  "2025 Apr week3": `
+    This week felt more relaxed and enjoyable. I played games with friends, spent quality time 
+    alone reading, and reflected on the positive moments of the past few days. There was a 
+    balance between productivity and relaxation. Taking small breaks helped me stay 
+    motivated and even sparked some new ideas for future projects.`,
 };
-
+const dummyWordData: Record<WeekKey, Word[]> = Object.fromEntries(
+  Object.entries(dummyTextData).map(([week, text]) => [
+    week,
+    extractWordFrequency(text).map(w => ({
+      text: w.text,
+      value: w.value * 1, 
+    })),
+  ])
+) as Record<WeekKey, Word[]>;
 const weekKeys = Object.keys(dummyWeeklyData) as WeekKey[];
 
 function ReportWeekly() {
   const [activeIndex, setActiveIndex] = useState(1);
 
   return (
-    <div className="px-4 py-6 font-PRegular">
+    <div className="px-1 py-6 font-PRegular">
       <h2 className="text-2xl font-PBold mb-2 text-center">
         {weekKeys[activeIndex]}
       </h2>
@@ -117,7 +99,7 @@ function ReportWeekly() {
       >
         {weekKeys.map((week, idx) => (
           <SwiperSlide key={week}>
-            <div className="w-full max-w-[600px] mx-auto">
+            <div className="w-full max-w-[600px] mx-auto px-2">
               <div className="h-[220px] bg-white rounded border border-gray-200 shadow-md p-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
@@ -125,8 +107,8 @@ function ReportWeekly() {
                     margin={{ top: 10, right: 30, left: -30, bottom: 0 }}
                   >
                     <defs>
-                      <linearGradient
-                        id={`colorCount-${idx}`}
+                    <linearGradient
+  id={`colorCount-${idx}`}
                         x1="0"
                         y1="0"
                         x2="0"
@@ -163,9 +145,11 @@ function ReportWeekly() {
                 <p className="text-left text-base font-PMedium text-gray-800 mb-2">
                   Frequently used words
                 </p>
-                <div className="h-[200px] bg-white rounded border border-gray-200 shadow-md p-4">
-                  <WordCloud words={dummyWordData[week]} />
-                </div>
+                <div
+  className="h-[260px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
+>
+  <WordCloud words={dummyWordData[week]} width={700} height={300} />
+</div>
               </div>
             </div>
           </SwiperSlide>

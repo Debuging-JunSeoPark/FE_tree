@@ -24,6 +24,6 @@ export function extractWordFrequency(text: string): Word[] {
     return Array.from(frequencyMap.entries())
       .map(([text, value]) => ({ text, value }))
       .sort((a, b) => b.value - a.value) 
-      .slice(0, 50); 
+      .slice(0, 30); 
   }
   
