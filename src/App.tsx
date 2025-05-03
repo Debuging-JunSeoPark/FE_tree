@@ -6,6 +6,7 @@ import Record from "./pages/Record";
 import Report from "./pages/Report";
 import Mypage from "./pages/Mypage";
 import SelectAvatar from "./pages/SelectAvatar";
+import StartScreen from "./pages/StartScreen";
 
 function App() {
   const router = createBrowserRouter([
@@ -26,6 +27,10 @@ function App() {
     {
       path: "/select-character",
       element: <SelectAvatar />,
+    },
+    {
+      path: "/start",
+      element: <StartScreen />,
     },
   ]);
   return (
