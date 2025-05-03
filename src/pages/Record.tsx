@@ -6,7 +6,7 @@ import QuestionList from "../components/QuestionList";
 function Record() {
   const [selected, setSelected] = useState<string | null>("Morning");
   return (
-    <div>
+    <div className="flex flex-col gap-1">
       <Weekly />
       <TimeSlotSelector selected={selected} setSelected={setSelected} />
       <div className="flex flex-col">

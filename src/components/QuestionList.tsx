@@ -27,7 +27,7 @@ function QuestionList() {
     );
   };
   return (
-    <div className="flex flex-col mt-4">
+    <div className="flex flex-col">
       {questions.map((question, index) => {
         const isSelected = selectedIndex === index;
         const isAnswered = submitted[index];

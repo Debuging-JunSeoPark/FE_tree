@@ -13,7 +13,7 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
     { id: 3, label: "Evening", count: "3/3", src: treeEvening },
   ];
   return (
-    <div className="flex flex-row items-center justify-around gap-2 m-2">
+    <div className="flex flex-row items-center justify-around gap-2 m-2 mt-4">
       {timeSlots.map((slot) => {
         const isSelected = selected == slot.label;
         return (
@@ -21,7 +21,9 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
             key={slot.id}
             onClick={() => setSelected(slot.label)}
             className={`flex flex-col items-center justify-center p-1 w-29 h-22  rounded-[6px] border-2 ${
-              isSelected ? "bg-second border-main" : "bg-white border-gray-100"
+              isSelected
+                ? "bg-second border-main shadow-lg"
+                : "bg-white border-gray-100"
             } font-PRegular text-[10px]`}
           >
             <img
