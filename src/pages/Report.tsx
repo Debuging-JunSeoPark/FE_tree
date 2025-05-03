@@ -32,7 +32,7 @@ function Report() {
       </div>
 
       {/* 콘텐츠 영역 */}
-      <div className="mt-6 min-h-[100px]">
+      <div className="mt-[10px] min-h-[100px]">
         {activeTab === "weekly" ? <ReportWeekly /> : <ReportMonthly />}
       </div>
     </div>
