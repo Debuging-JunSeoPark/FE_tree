@@ -141,14 +141,14 @@ function ReportWeekly() {
               </div>
 
               {/* ✅ 워드 클라우드 추가 */}
-              <div className="mt-6">
+              <div className="mt-4">
                 <p className="text-left text-base font-PMedium text-gray-800 mb-2">
                   Frequently used words
                 </p>
                 <div
-  className="h-[260px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
+  className="h-[240px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
 >
-  <WordCloud words={dummyWordData[week]} width={700} height={300} />
+  <WordCloud words={dummyWordData[week]} width={600} height={200} />
 </div>
               </div>
             </div>
