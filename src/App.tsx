@@ -9,6 +9,7 @@ import SelectAvatar from "./pages/SelectAvatar";
 import Splash from "./pages/Splash";
 import { useEffect, useState } from "react";
 import StartScreen from "./pages/StartScreen";
+import Signup from "./pages/Signup";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,8 @@ function App() {
       path: "/login",
       element: <Login />, // ✅ Layout 없이 별도 라우트로
     },
+    { path: "/signup", 
+      element: <Signup /> },
     {
       path: "/select-character",
       element: <SelectAvatar />,

@@ -1,10 +1,11 @@
 import treeIcon from "../assets/images/treeIcon.png";
 import forcyIcon from "../assets/images/forsythiaIcon.png";
 import blossomIcon from "../assets/images/cherryBlossomIcon.png";
-import logo from "../assets/images/headerLogo.png";
+import logo from "../assets/images/logoGreen.svg";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import GetStartedButton from "../components/GetStartedButton";
 
 function SelectAvatar() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ function SelectAvatar() {
         />
       </header>
 
-      <div className="flex flex-col items-center justify-around gap-5 pt-24">
+      <div className="flex flex-col items-center justify-around gap-5 pt-24 px-6">
         <div className="flex font-PBold text-2xl text-center my-3">
           Choice Your Avatar
         </div>
@@ -63,7 +64,7 @@ function SelectAvatar() {
             }`}
           />
         </div>
-        <div>
+        <div className="w-full flex flex-col gap-2">
           <div className="flex font-PRegular text-xs text-[#72777A] w-85">
             Nickname
           </div>
@@ -73,12 +74,7 @@ function SelectAvatar() {
             className="border border-[#E3E5E5] w-85 h-12 rounded-lg p-4"
           ></input>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="bg-main font-PMedium text-white text-sm w-85 h-12 rounded-lg"
-        >
-          GET STARTED
-        </button>
+        <GetStartedButton />
       </div>
     </div>
   );

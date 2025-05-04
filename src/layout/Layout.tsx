@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import BottomNav from "../navigator/BottonNav";
-import logo from "../assets/images/headerLogo.png";
+import logo from "../assets/images/logoGreen.svg";
 import { VscBell } from "react-icons/vsc";
 function Layout() {
   return (

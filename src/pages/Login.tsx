@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logo from "../assets/images/logoGreen.svg";
 import { useNavigate } from "react-router-dom";
+import GetStartedButton from "../components/GetStartedButton";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -58,12 +59,7 @@ function Login() {
         </div>
       </div>
 
-      <button
-        onClick={handleLogin}
-        className="w-full bg-[#0F9D58] text-white rounded-lg py-2 mt-6 font-semibold"
-      >
-        GET STARTED
-      </button>
+      <GetStartedButton className="mt-6" />
 
       <button
         className="mt-3 text-sm text-gray-600 underline"
