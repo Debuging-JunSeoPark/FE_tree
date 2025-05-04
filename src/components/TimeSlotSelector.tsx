@@ -1,6 +1,6 @@
-import treeMorning from "../assets/images/treeMorning.png";
-import treeLunch from "../assets/images/treeLunch.png";
-import treeEvening from "../assets/images/treeEvening.png";
+import treeMorning from "../assets/images/treeMorning.svg";
+import treeLunch from "../assets/images/treeLunch.svg";
+import treeEvening from "../assets/images/treeEvening.svg";
 type Props = {
   selected: string | null;
   setSelected: (label: string) => void;

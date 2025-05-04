@@ -146,7 +146,7 @@ function ReportWeekly() {
                   Frequently used words
                 </p>
                 <div
-  className="h-[240px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
+  className="h-[220px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
 >
   <WordCloud words={dummyWordData[week]} width={600} height={200} />
 </div>
