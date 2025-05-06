@@ -12,6 +12,7 @@ function Home() {
       setNickname(userNickname);
     }
   }, []);
+  const answeredCount = 90;
   return (
     <div className="flex flex-col justify-center items-center h-full gap-4">
       <div className="flex flex-row items-center p-3 gap-2 w-84 h-14.5 rounded-xl border-2 border-homeBorder">
@@ -28,7 +29,7 @@ function Home() {
         <div className="text-base text-black font-PMedium pl-2 mb-1">
           Questions Challenge
         </div>
-        <TreeTrunk />
+        <TreeTrunk answeredCount={answeredCount} />
       </div>
       <div>
         <div className="text-base text-black font-PMedium pl-2 mb-1">
