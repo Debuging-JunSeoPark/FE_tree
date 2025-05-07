@@ -28,13 +28,12 @@ function Signup() {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
       {/* 상단 바 */}
-      <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
       <Header title="Sign Up" showLogo={false} />
-      {/* 이하 동일 */}
-    </div>
-
-      {/* 로고 및 타이틀 */}
-      <img src={logo} alt="tree logo" className="w-24 h-auto mb-3" />
+      <img
+        src={logo}
+        alt="tree logo"
+        className="w-24 h-auto mt-20 mb-4"
+      />
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         Create your account
       </h2>
