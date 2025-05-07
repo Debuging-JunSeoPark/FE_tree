@@ -6,6 +6,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import GetStartedButton from "../components/GetStartedButton";
+import Header from "../components/Header";
 
 function SelectAvatar() {
   const navigate = useNavigate();
@@ -22,17 +23,9 @@ function SelectAvatar() {
   };
   return (
     <div className="relative">
-      <header className="flex items-center justify-baseline fixed top-0 w-full bg-white border-b border-gray-200 p-4 py-5">
-        <IoIosArrowBack
-          onClick={() => navigate("/login")}
-          className="w-6 h-6"
-        />
-        <img
-          src={logo}
-          alt="로고"
-          className="absolute left-1/2 -translate-x-1/2 w-20 h-auto"
-        />
-      </header>
+      <div className="relative">
+      <Header showLogo /> 
+      </div>
 
       <div className="flex flex-col items-center justify-around gap-5 pt-24 px-6">
         <div className="flex font-PBold text-2xl text-center my-3">
