@@ -2,9 +2,14 @@ import { useState } from "react";
 import TimeSlotSelector from "../components/TimeSlotSelector";
 import Weekly from "../components/Weekly";
 import QuestionList from "../components/QuestionList";
+import { QType } from "../apis/diary.type";
 
 function Record() {
-  const [selected, setSelected] = useState<string | null>("Morning");
+  const [selected, setSelected] = useState<"Morning" | "Lunch" | "Evening">(
+    "Morning"
+  );
+  const convertToQTye = (slot: string): QType =>
+    (slot.toLowerCase() + "1") as QType;
   return (
     <div className="flex flex-col gap-1">
       <Weekly />
@@ -18,7 +23,7 @@ function Record() {
         </div>
       </div>
       {/*질문리스트*/}
-      <QuestionList />
+      <QuestionList qtype={convertToQTye(selected)} />
     </div>
   );
 }
