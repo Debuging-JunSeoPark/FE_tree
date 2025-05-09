@@ -2,12 +2,19 @@ import treeMorning from "../assets/images/treeMorning.svg";
 import treeLunch from "../assets/images/treeLunch.svg";
 import treeEvening from "../assets/images/treeEvening.svg";
 type Props = {
-  selected: string | null;
-  setSelected: (label: string) => void;
+  selected: "Morning" | "Lunch" | "Evening";
+  setSelected: React.Dispatch<
+    React.SetStateAction<"Morning" | "Lunch" | "Evening">
+  >;
 };
 
 function TimeSlotSelector({ selected, setSelected }: Props) {
-  const timeSlots = [
+  const timeSlots: {
+    id: number;
+    label: "Morning" | "Lunch" | "Evening";
+    count: string;
+    src: string;
+  }[] = [
     { id: 1, label: "Morning", count: "1/3", src: treeMorning },
     { id: 2, label: "Lunch", count: "2/3", src: treeLunch },
     { id: 3, label: "Evening", count: "3/3", src: treeEvening },

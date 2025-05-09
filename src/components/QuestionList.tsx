@@ -1,7 +1,11 @@
-import { useState } from "react";
-import { postDiary } from "../apis/diary";
+import { useEffect, useState } from "react";
+import { getDiaryList, postDiary } from "../apis/diary";
+import { DiaryContent, QType } from "../apis/diary.type";
 
-function QuestionList() {
+interface QuestionTypeProps {
+  qtype: QType;
+}
+function QuestionList({ qtype }: QuestionTypeProps) {
   const questions = [
     "List 3 things you were grateful for today",
     "Any insights or learnings you would like to jot down?",
@@ -15,6 +19,26 @@ function QuestionList() {
   const [submitted, setSubmitted] = useState<boolean[]>(
     new Array(questions.length).fill(false)
   );
+
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      try {
+        const response = await getDiaryList(qtype);
+        const filledAnswers = [...answers];
+        const filledSubmitted = [...submitted];
+        response.forEach((entry, idx) => {
+          const parsed: DiaryContent = JSON.parse(entry.diary);
+          filledAnswers[idx] = parsed.content;
+          filledSubmitted[idx] = true;
+        });
+        setAnswers(filledAnswers);
+        setSubmitted(filledSubmitted);
+      } catch (error) {
+        console.error("답변 조회 실패", error);
+      }
+    };
+    fetchAnswers();
+  }, [qtype]);
   const toggleQuestion = (index: number) => {
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
