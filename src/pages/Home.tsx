@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import icon from "../assets/images/Icon.png";
 import TreeTrunk from "../components/TreeTrunk";
 import Cookies from "js-cookie";
+import QuoteCard from "../components/QuoteCard";
 
 function Home() {
   const [nickname, setNickname] = useState<string>("");
@@ -35,7 +36,9 @@ function Home() {
         <div className="text-base text-black font-PMedium pl-2 mb-1">
           Quote of the Day
         </div>
-        <div className="flex flex-row items-center p-3 gap-2 w-84 h-32 rounded-xl border-2 border-homeBorder shadow-lg"></div>
+        <div className="flex flex-col justify-center p-3 gap-2 w-84 h-32 rounded-xl border-2 border-homeBorder shadow-lg bg-white">
+  <QuoteCard />
+</div>
       </div>
     </div>
   );
