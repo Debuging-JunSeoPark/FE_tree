@@ -40,7 +40,7 @@ const QuoteCard = () => {
         setQuote(newQuote);
       })
       .catch((err) => {
-        console.error("명언 불러오기 실패:", err);
+        console.error("Failed to fetch quote:", err);
       })
       .finally(() => {
         setIsLoading(false);
@@ -49,16 +49,15 @@ const QuoteCard = () => {
 
   return (
     <>
-      <div className="text-sm font-semibold text-black mb-1">📖 오늘의 명언</div>
       {isLoading ? (
-        <p className="text-sm text-gray-400 animate-pulse">명언을 불러오는 중...</p>
+        <p className="text-sm text-gray-400 animate-pulse">Loading quote...</p>
       ) : quote ? (
         <>
           <p className="text-sm text-black italic">"{quote.content}"</p>
           <p className="text-xs text-gray-600 text-right">– {quote.author}</p>
         </>
       ) : (
-        <p className="text-sm text-gray-400">명언을 가져오지 못했어요 😢</p>
+        <p className="text-sm text-gray-400">Failed to load quote 😢</p>
       )}
     </>
   );
