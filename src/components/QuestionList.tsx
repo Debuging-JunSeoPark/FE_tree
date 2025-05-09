@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { postDiary } from "../apis/diary";
 
 function QuestionList() {
   const questions = [
@@ -17,8 +18,18 @@ function QuestionList() {
   const toggleQuestion = (index: number) => {
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
-  const handleSave = (index: number) => {
-    setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
+  const handleSave = async (index: number) => {
+    try {
+      const diaryContent = { content: answers[index] };
+      await postDiary({
+        qtype: "morning1", //나중에 props로 수정
+        diary: JSON.stringify(diaryContent),
+      });
+      setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
+    } catch (error) {
+      console.error("답변 전송 실패", error);
+      throw error;
+    }
   };
 
   const handleChange = (index: number, value: string) => {
