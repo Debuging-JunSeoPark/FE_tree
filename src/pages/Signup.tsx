@@ -4,6 +4,7 @@ import { IoIosArrowBack } from "react-icons/io";
 import logo from "../assets/images/logoGreen.svg";
 import GetStartedButton from "../components/GetStartedButton";
 import { postEmailRegister } from "../apis/auth";
+import Header from "../components/Header";
 
 function Signup() {
   const navigate = useNavigate();
@@ -27,16 +28,12 @@ function Signup() {
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
       {/* 상단 바 */}
-      <div className="w-full h-[48px] flex items-center justify-between border-b border-gray-200 mb-6">
-        <button onClick={() => navigate(-1)} className="text-xl">
-          <IoIosArrowBack />
-        </button>
-        <div className="text-lg font-semibold">Sign Up</div>
-        <div className="w-6" />
-      </div>
-
-      {/* 로고 및 타이틀 */}
-      <img src={logo} alt="tree logo" className="w-24 h-auto mb-3" />
+      <Header title="Sign Up" showLogo={false} />
+      <img
+        src={logo}
+        alt="tree logo"
+        className="w-24 h-auto mt-20 mb-4"
+      />
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         Create your account
       </h2>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import logo from "../assets/images/logoGreen.svg";
 import { useNavigate } from "react-router-dom";
 import GetStartedButton from "../components/GetStartedButton";
+import Header from "../components/Header";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,13 +15,13 @@ function Login() {
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
-      <div className="w-full h-[48px] flex items-center justify-between border-b border-gray-200 mb-6">
-        <button onClick={() => navigate(-1)} className="text-xl">{`←`}</button>
-        <div className="text-lg font-semibold">Log In</div>
-        <div className="w-6" />
-      </div>
 
-      <img src={logo} alt="tree logo" className="w-24 h-auto mb-4" />
+      <Header title="Log In" showLogo={false} />
+      <img
+        src={logo}
+        alt="tree logo"
+        className="w-24 h-auto mt-20 mb-4"
+      />
       <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
 
       <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg my-2 shadow-sm">
