@@ -23,12 +23,13 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
   useEffect(() => {
     setSelectedIndex(listIndex);
   }, [listIndex]);
+
   useEffect(() => {
     const fetchAnswers = async () => {
+      const filledAnswers = new Array(3).fill("");
+      const filledSubmitted = new Array(3).fill(false);
       try {
         const response = await getDiaryList(qtype);
-        const filledAnswers = [...answers];
-        const filledSubmitted = [...submitted];
         response.forEach((entry, idx) => {
           const parsed: DiaryContent = JSON.parse(entry.diary);
           filledAnswers[idx] = parsed.content;
