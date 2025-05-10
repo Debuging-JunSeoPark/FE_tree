@@ -8,9 +8,9 @@ interface QuestionTypeProps {
 }
 function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
   const questions = [
-    "List 3 things you were grateful for today",
-    "Any insights or learnings you would like to jot down?",
-    "What was the highlight of your day?",
+    "What are your plans for today? How do you feel as you start your day?",
+    "Is your day going well so far? Have there been any events that influenced your mood?",
+    "As you end the day, freely reflect on what happened today and how you felt.",
   ];
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(listIndex);
