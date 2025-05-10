@@ -5,6 +5,7 @@ import GetStartedButton from "../components/GetStartedButton";
 import Header from "../components/Header";
 import { postLogin } from "../apis/auth";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -31,12 +32,17 @@ function Login() {
       } else {
         navigate("/select-avatar");
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+        } else {
+          alert("로그인 중 오류가 발생했습니다.");
+          console.error("로그인 실패", error);
+        }
       } else {
-        alert("로그인 중 오류가 발생했습니다.");
-        console.error("로그인 실패", error);
+        alert("예기치 못한 오류가 발생했습니다.");
+        console.error("알 수 없는 오류", error);
       }
     }
   };
