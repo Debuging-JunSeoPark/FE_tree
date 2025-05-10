@@ -4,28 +4,32 @@ import { DiaryContent, QType } from "../apis/diary.type";
 
 interface QuestionTypeProps {
   qtype: QType;
+  listIndex?: number;
 }
-function QuestionList({ qtype }: QuestionTypeProps) {
+function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
   const questions = [
     "List 3 things you were grateful for today",
     "Any insights or learnings you would like to jot down?",
     "What was the highlight of your day?",
   ];
 
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(listIndex);
   const [answers, setAnswers] = useState<string[]>(
     new Array(questions.length).fill("")
   );
   const [submitted, setSubmitted] = useState<boolean[]>(
     new Array(questions.length).fill(false)
   );
+  useEffect(() => {
+    setSelectedIndex(listIndex);
+  }, [listIndex]);
 
   useEffect(() => {
     const fetchAnswers = async () => {
+      const filledAnswers = new Array(3).fill("");
+      const filledSubmitted = new Array(3).fill(false);
       try {
         const response = await getDiaryList(qtype);
-        const filledAnswers = [...answers];
-        const filledSubmitted = [...submitted];
         response.forEach((entry, idx) => {
           const parsed: DiaryContent = JSON.parse(entry.diary);
           filledAnswers[idx] = parsed.content;
@@ -39,14 +43,16 @@ function QuestionList({ qtype }: QuestionTypeProps) {
     };
     fetchAnswers();
   }, [qtype]);
+
   const toggleQuestion = (index: number) => {
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
   const handleSave = async (index: number) => {
+    if (submitted[index]) return;
     try {
       const diaryContent = { content: answers[index] };
       await postDiary({
-        qtype: "morning1", //나중에 props로 수정
+        qtype: "morning", //나중에 props로 수정
         diary: JSON.stringify(diaryContent),
       });
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
