@@ -10,6 +10,13 @@ function Record() {
   );
   const convertToQTye = (slot: string): QType =>
     (slot.toLowerCase() + "1") as QType;
+
+  const getListIndex = (slot: "Morning" | "Lunch" | "Evening") => {
+    if (slot === "Morning") return 0;
+    if (slot === "Lunch") return 1;
+    return 2;
+  };
+
   return (
     <div className="flex flex-col gap-1">
       <Weekly />
@@ -23,7 +30,10 @@ function Record() {
         </div>
       </div>
       {/*질문리스트*/}
-      <QuestionList qtype={convertToQTye(selected)} />
+      <QuestionList
+        qtype={convertToQTye(selected)}
+        listIndex={getListIndex(selected)}
+      />
     </div>
   );
 }
