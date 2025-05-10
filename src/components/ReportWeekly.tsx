@@ -52,13 +52,13 @@ const dummyTextData: Record<WeekKey, string> = {
     motivated to keep pushing forward. I took breaks to stay calm and reflect on my progress. 
     The weekend brought a sense of excitement, and I allowed myself to rest, recover, and 
     recharge for the next week ahead.`,
-    
+
   "2025 Apr week2": `
     Workload increased significantly this week. I felt tired and overwhelmed at times, 
     but I reminded myself of the goals I had set earlier in the month. Despite the stress, 
     I managed to stay organized and maintain a steady rhythm. I tried meditating in the evenings 
     to regain focus and reduce anxiety. Rest was my top priority over the weekend.`,
-    
+
   "2025 Apr week3": `
     This week felt more relaxed and enjoyable. I played games with friends, spent quality time 
     alone reading, and reflected on the positive moments of the past few days. There was a 
@@ -70,7 +70,7 @@ const dummyWordData: Record<WeekKey, Word[]> = Object.fromEntries(
     week,
     extractWordFrequency(text).map(w => ({
       text: w.text,
-      value: w.value * 1, 
+      value: w.value * 1,
     })),
   ])
 ) as Record<WeekKey, Word[]>;
@@ -99,16 +99,19 @@ function ReportWeekly() {
       >
         {weekKeys.map((week, idx) => (
           <SwiperSlide key={week}>
-            <div className="w-full max-w-[600px] mx-auto px-2">
-              <div className="h-[220px] bg-white rounded border border-gray-200 shadow-md p-4">
+            <div className="w-full max-w-[900px] mx-auto px-2">
+            <div
+  className="h-[220px] bg-white rounded border border-gray-200 p-4"
+  style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
+>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart
                     data={dummyWeeklyData[week]}
                     margin={{ top: 10, right: 30, left: -30, bottom: 0 }}
                   >
                     <defs>
-                    <linearGradient
-  id={`colorCount-${idx}`}
+                      <linearGradient
+                        id={`colorCount-${idx}`}
                         x1="0"
                         y1="0"
                         x2="0"
@@ -146,10 +149,11 @@ function ReportWeekly() {
                   Frequently used words
                 </p>
                 <div
-  className="h-[220px] bg-white rounded border border-gray-200 shadow-lg p-4 overflow-hidden flex justify-center items-center"
+  className="h-[220px] bg-white rounded border border-gray-200 p-4 overflow-hidden flex justify-center items-center"
+  style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
 >
-  <WordCloud words={dummyWordData[week]} width={600} height={200} />
-</div>
+                  <WordCloud words={dummyWordData[week]} width={600} height={200} />
+                </div>
               </div>
             </div>
           </SwiperSlide>
