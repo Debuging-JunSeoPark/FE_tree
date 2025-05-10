@@ -8,8 +8,7 @@ function Record() {
   const [selected, setSelected] = useState<"Morning" | "Lunch" | "Evening">(
     "Morning"
   );
-  const convertToQTye = (slot: string): QType =>
-    (slot.toLowerCase() + "1") as QType;
+  const convertToQTye = (slot: string): QType => slot.toLowerCase() as QType;
 
   const getListIndex = (slot: "Morning" | "Lunch" | "Evening") => {
     if (slot === "Morning") return 0;

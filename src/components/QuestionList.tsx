@@ -52,7 +52,7 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
     try {
       const diaryContent = { content: answers[index] };
       await postDiary({
-        qtype: "morning1", //나중에 props로 수정
+        qtype: "morning", //나중에 props로 수정
         diary: JSON.stringify(diaryContent),
       });
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
