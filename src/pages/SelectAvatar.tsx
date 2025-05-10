@@ -1,12 +1,11 @@
 import treeIcon from "../assets/images/treeIcon.svg";
 import forcyIcon from "../assets/images/forsythiaIcon.svg";
 import blossomIcon from "../assets/images/cherryBlossomIcon.svg";
-import logo from "../assets/images/logoGreen.svg";
-import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import GetStartedButton from "../components/GetStartedButton";
 import Header from "../components/Header";
+import { putUserProfile } from "../apis/user";
 
 function SelectAvatar() {
   const navigate = useNavigate();
@@ -14,17 +13,39 @@ function SelectAvatar() {
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [nickname, setNickname] = useState<string>("");
 
-  const handleSubmit = () => {
+  const getAvatarString = (avatarNumber: number): string => {
+    switch (avatarNumber) {
+      case 1:
+        return "GREEN";
+      case 2:
+        return "YELLOW";
+      case 3:
+        return "PINK";
+      default:
+        return "GREEN";
+    }
+  };
+  const handleSubmit = async () => {
     if (selectedAvatar === null || nickname === "") {
       alert("Please select an avatar and enter a nickname.");
       return;
     }
-    navigate("/");
+    try {
+      await putUserProfile({
+        nickname,
+        avatar: getAvatarString(selectedAvatar),
+      });
+      navigate("/");
+    } catch (error) {
+      alert("Failed to update profile. Please try again.");
+      throw error;
+    }
   };
+
   return (
     <div className="relative">
       <div className="relative">
-      <Header showLogo /> 
+        <Header showLogo />
       </div>
 
       <div className="flex flex-col items-center justify-around gap-5 pt-24 px-6">
@@ -67,7 +88,7 @@ function SelectAvatar() {
             className="border border-[#E3E5E5] w-85 h-12 rounded-lg p-4"
           ></input>
         </div>
-        <GetStartedButton />
+        <GetStartedButton onClick={handleSubmit} />
       </div>
     </div>
   );
