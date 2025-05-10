@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { IoIosArrowBack } from "react-icons/io";
 import logo from "../assets/images/logoGreen.svg";
 import GetStartedButton from "../components/GetStartedButton";
-import { postCheckEmail, postVerifyEmailCode , postVerifiedSignup} from "../apis/auth";
+import { postCheckEmail, postVerifyEmailCode, postVerifiedSignup } from "../apis/auth";
 import Header from "../components/Header";
+import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 
 function Signup() {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ function Signup() {
   const [code, setCode] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [showPolicy, setShowPolicy] = useState(false);
 
   const handleEmailRequest = async () => {
     try {
@@ -22,12 +23,12 @@ function Signup() {
         alert("이메일을 입력해주세요.");
         return;
       }
-  
+
       if (!email.includes("@")) {
         alert("유효한 이메일 형식을 입력해주세요.");
         return;
       }
-  
+
       await postCheckEmail(email);
       alert("인증 이메일이 성공적으로 발송되었습니다.");
       setEmailSent(true);
@@ -59,27 +60,32 @@ function Signup() {
       alert("모든 항목을 입력해주세요.");
       return;
     }
-  
+
     if (!email.includes("@")) {
       alert("유효한 이메일 형식을 입력해주세요.");
       return;
     }
-  
+
     if (password.length < 6) {
       alert("비밀번호는 최소 6자 이상이어야 합니다.");
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setPasswordMismatch(true);
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-  
+
+    if (!agreed) {
+      alert("개인정보 처리방침에 동의해주세요.");
+      return;
+    }
+
     try {
       await postVerifiedSignup({ email, code, password });
       alert("회원가입이 완료되었습니다.");
-      navigate("/login"); // ✅ 이 줄은 반드시 try 안에서만 실행되도록 유지
+      navigate("/login");
     } catch (error: any) {
       if (error.response?.status === 409) {
         alert("이미 가입된 이메일입니다.");
@@ -91,6 +97,7 @@ function Signup() {
       }
     }
   };
+
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
@@ -188,26 +195,28 @@ function Signup() {
 
       {/* 비밀번호 확인 */}
       <div className="w-full mb-3">
-  <label className="text-sm text-gray-600">Confirm Password</label>
-  <input
-    type="password"
-    value={confirmPassword}
-    onChange={(e) => {
-      setConfirmPassword(e.target.value);
-      if (passwordMismatch) setPasswordMismatch(false); // 입력 중이면 리셋
-    }}
-    placeholder="password"
-    className={`w-full rounded-lg p-2 mt-1 border ${
-      passwordMismatch ? "border-red-500" : "border-gray-300"
-    }`}
-  />
-</div>
+        <label className="text-sm text-gray-600">Confirm Password</label>
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            if (passwordMismatch) setPasswordMismatch(false); // 입력 중이면 리셋
+          }}
+          placeholder="password"
+          className={`w-full rounded-lg p-2 mt-1 border ${passwordMismatch ? "border-red-500" : "border-gray-300"
+            }`}
+        />
+      </div>
 
-      {/* 약관 체크 */}
+      {/* 약관 체크 영역 */}
       <div className="w-full flex justify-end items-center gap-2 text-sm text-gray-500 mb-6">
         <span>
           I have read the{" "}
-          <span className="text-[#87CEAB] underline cursor-pointer">
+          <span
+            className="text-[#87CEAB] underline cursor-pointer"
+            onClick={() => setShowPolicy(true)}
+          >
             Privacy Policy
           </span>
         </span>
@@ -218,6 +227,9 @@ function Signup() {
           className="w-4 h-4"
         />
       </div>
+
+      {/* 모달 렌더링 */}
+      {showPolicy && <PrivacyPolicyModal onClose={() => setShowPolicy(false)} />}
 
       {/* 가입 버튼 */}
       <GetStartedButton label="GET STARTED" className="w-full" onClick={handleSignup} />
