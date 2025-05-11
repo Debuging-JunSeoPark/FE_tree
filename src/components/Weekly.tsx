@@ -1,16 +1,19 @@
 import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-//import { useState } from "react";
+import { useState } from "react";
 import icon from "../assets/images/Icon.png";
+import { FaChevronDown } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface WeeklyProps {
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
 }
-function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
-  //const today = new Date();
-  //const [selectedDate, setSelectedDate] = useState<Date>(today);
-  const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
 
+function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const week = Array.from({ length: 7 }, (_, i) => {
     const day = addDays(start, i);
     return {
@@ -20,19 +23,45 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
       isSelected: isSameDay(day, selectedDate),
     };
   });
+
   return (
     <div className="flex flex-col m-1">
-      <div className="font-PBlack text-2xl">
-        {format(selectedDate, "yyyy MMM")}
+      <div className="flex items-center gap-2 relative">
+        <div className="font-PBlack text-2xl">
+          {format(selectedDate, "yyyy MMM")}
+        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="text-main text-sm focus:outline-none"
+        >
+          <FaChevronDown />
+        </button>
+        {isOpen && (
+          <div className="absolute z-50 top-10">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date: Date | null) => {
+                if (date) {
+                  setSelectedDate(date);
+                }
+                setIsOpen(false);
+              }}
+              inline
+              calendarStartDay={1}
+            />
+          </div>
+        )}
       </div>
+
       <div className="flex flex-row items-center justify-center gap-2">
         {week.map((day, index) => (
           <div
             key={index}
             onClick={() => setSelectedDate(day.fullDate)}
             className={`flex flex-col items-center rounded-2xl p-1 w-11.5 h-17 font-PBold cursor-pointer
-               ${day.isSelected ? "bg-main text-white" : "bg-white text-Title"}
-             `}
+               ${
+                 day.isSelected ? "bg-main text-white" : "bg-white text-Title"
+               }`}
           >
             <div>{day.label}</div>
             <div className="flex items-center justify-center rounded-full w-8 h-8">
@@ -50,4 +79,5 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
     </div>
   );
 }
+
 export default Weekly;
