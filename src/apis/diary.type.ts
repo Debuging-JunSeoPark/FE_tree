@@ -1,4 +1,4 @@
-export type QType = "morning" | "lunch" | "dinner";
+export type QType = "morning" | "lunch" | "evening";
 export interface DiaryContent {
   content: string;
   //questionIndex: number;

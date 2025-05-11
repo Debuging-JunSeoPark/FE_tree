@@ -3,8 +3,8 @@ import { getPeriodDiary, postDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
 
 interface QuestionListProps {
-  selectedSlot: "Morning" | "Lunch" | "Dinner";
-  setSelectedSlot: (slot: "Morning" | "Lunch" | "Dinner") => void;
+  selectedSlot: "Morning" | "Lunch" | "Evening";
+  setSelectedSlot: (slot: "Morning" | "Lunch" | "Evening") => void;
   selectedDate: Date;
 }
 
@@ -22,19 +22,19 @@ function QuestionList({
   const getQTypeByIndex = (index: number): QType => {
     if (index === 0) return "morning";
     if (index === 1) return "lunch";
-    return "dinner";
+    return "evening";
   };
 
-  const getIndexBySlot = (slot: "Morning" | "Lunch" | "Dinner"): number => {
+  const getIndexBySlot = (slot: "Morning" | "Lunch" | "Evening"): number => {
     if (slot === "Morning") return 0;
     if (slot === "Lunch") return 1;
     return 2;
   };
 
-  const getSlotByIndex = (index: number): "Morning" | "Lunch" | "Dinner" => {
+  const getSlotByIndex = (index: number): "Morning" | "Lunch" | "Evening" => {
     if (index === 0) return "Morning";
     if (index === 1) return "Lunch";
-    return "Dinner";
+    return "Evening";
   };
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(
@@ -64,7 +64,7 @@ function QuestionList({
 
       try {
         const response = await getPeriodDiary(start, end);
-
+        console.log(response);
         for (let index = 0; index < 3; index++) {
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);
