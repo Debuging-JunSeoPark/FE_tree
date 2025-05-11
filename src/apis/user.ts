@@ -27,3 +27,4 @@ export const getUserProfile = async (): Promise<UserProfile> => {
     throw error;
   }
 };
+

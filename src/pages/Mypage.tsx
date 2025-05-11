@@ -52,15 +52,19 @@ function Mypage() {
 
   return (
     <div className="relative flex flex-col items-center justify-start w-full h-full px-4 py-8">
-      <button
-        className="absolute top-4 right-4 px-4 py-1 text-sm text-white rounded-full"
-        style={{ backgroundColor: "#0F9D58" }}
-        onClick={() => setShowModal(true)}
-      >
-        edit
-      </button>
 
-      <div className="flex flex-col items-center w-full pb-6 border-b border-gray-300 shadow max-w-md">
+
+      <div className="relative flex flex-col items-center w-full pb-6 border-b border-gray-300 shadow max-w-md">
+
+        {/* edit 버튼 */}
+        <button
+          className="absolute top-2 right-2 px-3 py-1 text-sm text-white rounded-full"
+          style={{ backgroundColor: "#0F9D58" }}
+          onClick={() => setShowModal(true)}
+        >
+          edit
+        </button>
+
         <img
           src={getAvatarImage(profile.avatar)}
           alt="아바타"
