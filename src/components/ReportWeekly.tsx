@@ -100,9 +100,9 @@ function ReportWeekly() {
     if (date) {
       const utcDate = toUTCStartOfDay(date);
       setSelectedDate(utcDate);
-      setShowPicker(false);
     }
   }}
+  onSelect={() => setShowPicker(false)} // ✅ 항상 클릭 시 닫히도록 처리
   calendarStartDay={1}
   dayClassName={(date) => {
     const isToday =
@@ -113,6 +113,7 @@ function ReportWeekly() {
     return isToday ? "my-utc-today" : "";
   }}
 />
+
 
 
         </div>
@@ -197,12 +198,12 @@ function ReportWeekly() {
   );
 }
 
-// ✅ UTC 자정 기준 Date 생성
+// UTC 자정 기준 Date 생성
 function toUTCStartOfDay(date: Date): Date {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 }
 
-// ✅ UTC → 로컬 자정 기준 Date 변환 (선택된 날짜를 정확히 표시하기 위함)
+// UTC → 로컬 자정 기준 Date 변환 (선택된 날짜를 정확히 표시하기 위함)
 function toLocalMidnight(date: Date): Date {
   return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 }
