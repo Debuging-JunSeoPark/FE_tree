@@ -2,28 +2,47 @@ import { useEffect, useState } from "react";
 import { getPeriodDiary, postDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
 
-interface QuestionTypeProps {
-  qtype: QType;
-  listIndex?: number;
+interface QuestionListProps {
+  selectedSlot: "Morning" | "Lunch" | "Dinner";
+  setSelectedSlot: (slot: "Morning" | "Lunch" | "Dinner") => void;
 }
-function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
+
+function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
   const questions = [
     "What are your plans for today? How do you feel as you start your day?",
     "Is your day going well so far? Have there been any events that influenced your mood?",
     "As you end the day, freely reflect on what happened today and how you felt.",
   ];
 
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(listIndex);
-  const [answers, setAnswers] = useState<string[]>(
-    new Array(questions.length).fill("")
+  const getQTypeByIndex = (index: number): QType => {
+    if (index === 0) return "morning";
+    if (index === 1) return "lunch";
+    return "dinner";
+  };
+
+  const getIndexBySlot = (slot: "Morning" | "Lunch" | "Dinner"): number => {
+    if (slot === "Morning") return 0;
+    if (slot === "Lunch") return 1;
+    return 2;
+  };
+
+  const getSlotByIndex = (index: number): "Morning" | "Lunch" | "Dinner" => {
+    if (index === 0) return "Morning";
+    if (index === 1) return "Lunch";
+    return "Dinner";
+  };
+
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(
+    getIndexBySlot(selectedSlot)
   );
+  const [answers, setAnswers] = useState<string[]>(new Array(3).fill(""));
   const [submitted, setSubmitted] = useState<boolean[]>(
-    new Array(questions.length).fill(false)
+    new Array(3).fill(false)
   );
 
   useEffect(() => {
-    setSelectedIndex(listIndex);
-  }, [listIndex]);
+    setSelectedIndex(getIndexBySlot(selectedSlot));
+  }, [selectedSlot]);
 
   useEffect(() => {
     const fetchAnswers = async () => {
@@ -35,20 +54,24 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
       const todayEnd = new Date();
       todayEnd.setHours(23, 59, 59, 999);
 
-      const start = todayStart.toISOString(); // e.g. 2025-05-11T00:00:00.000Z
+      const start = todayStart.toISOString();
       const end = todayEnd.toISOString();
 
       try {
-        const response = await getPeriodDiary(start, end); // ✅ 포맷된 날짜 전달
-        const todayDiaries = response.diaries.filter(
-          (entry) => entry.qtype === qtype
-        );
+        const response = await getPeriodDiary(start, end);
 
-        todayDiaries.forEach((entry, idx) => {
-          const parsed: DiaryContent = JSON.parse(entry.diary);
-          filledAnswers[idx] = parsed.content;
-          filledSubmitted[idx] = true;
-        });
+        for (let index = 0; index < 3; index++) {
+          const qtype = getQTypeByIndex(index);
+          const match = response.diaries.find((entry) => entry.qtype === qtype);
+          if (match) {
+            const parsed: DiaryContent = JSON.parse(match.diary);
+            console.log(parsed);
+            if (parsed?.content && typeof parsed.content === "string") {
+              filledAnswers[index] = parsed.content;
+              filledSubmitted[index] = true;
+            }
+          }
+        }
 
         setAnswers(filledAnswers);
         setSubmitted(filledSubmitted);
@@ -58,23 +81,30 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
     };
 
     fetchAnswers();
-  }, [qtype]);
+  }, []);
 
   const toggleQuestion = (index: number) => {
+    const slot = getSlotByIndex(index);
+    setSelectedSlot(slot); // ✅ 타임슬롯 선택 반영
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
+
   const handleSave = async (index: number) => {
     if (submitted[index]) return;
     try {
-      const diaryContent = { content: answers[index] };
+      const diaryContent: DiaryContent = {
+        content: answers[index],
+        questionIndex: index,
+      };
+
       await postDiary({
-        qtype: qtype,
+        qtype: getQTypeByIndex(index),
         diary: JSON.stringify(diaryContent),
       });
+
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
     } catch (error) {
       console.error("답변 전송 실패", error);
-      throw error;
     }
   };
 
@@ -83,11 +113,13 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
       prev.map((answer, i) => (i === index ? value : answer))
     );
   };
+
   return (
     <div className="flex flex-col">
       {questions.map((question, index) => {
         const isSelected = selectedIndex === index;
         const isAnswered = submitted[index];
+
         return (
           <div
             key={index}
@@ -102,7 +134,7 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
               className="flex items-center gap-3 p-3 cursor-pointer"
             >
               <div className="flex items-center justify-center rounded-full bg-[#d9d9d9] w-8 h-8 text-sm">
-                {submitted[index] ? "✔️" : "❓"}
+                {isAnswered ? "✔️" : "❓"}
               </div>
               <div
                 className={`text-sm ${
@@ -121,7 +153,7 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
                   <>
                     <textarea
                       className="w-full h-24 p-2 border border-gray-300 rounded text-sm resize-none"
-                      placeholder="Enter a value between 0-100"
+                      placeholder="Write your answer..."
                       value={answers[index]}
                       onChange={(e) => handleChange(index, e.target.value)}
                     />
