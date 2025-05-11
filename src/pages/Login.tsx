@@ -30,7 +30,7 @@ function Login() {
       if (res.profileComplete) {
         navigate("/");
       } else {
-        navigate("/select-avatar");
+        navigate("/select-character");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
