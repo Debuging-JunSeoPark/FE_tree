@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import WordCloud, { Word } from "../components/WordCloud";
@@ -18,20 +12,12 @@ import { getPeriodDiary } from "../apis/diary";
 import { getStartAndEndOfWeek } from "../utils/getStartAndEndOfWeek";
 import { formatWeekKey } from "../utils/formatWeekKey";
 
-
-
 const dayKeys = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 type DayKey = (typeof dayKeys)[number];
 
 function ReportWeekly() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showCalendar, setShowCalendar] = useState(false);
-
-  const getDayNameFromDate = (date: Date): DayKey => {
-    const dayIndex = date.getDay(); // 0 (Sun) ~ 6 (Sat)
-    const mondayFirstIndex = (dayIndex + 6) % 7; // → 0 (Mon) ~ 6 (Sun)
-    return dayKeys[mondayFirstIndex];
-  };
+  const [showPicker, setShowPicker] = useState(false);
   const [weeklyData, setWeeklyData] = useState<Record<DayKey, number>>({
     Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0,
   });
@@ -39,11 +25,18 @@ function ReportWeekly() {
 
   const WEEK_SLIDE_RANGE = 2;
   const today = new Date();
+  const todayUTC = toUTCStartOfDay(today);
 
   const generateDateByOffset = (offset: number) => {
     const d = new Date(today);
     d.setDate(d.getDate() + offset * 7);
     return d;
+  };
+
+  const getDayNameFromDate = (date: Date): DayKey => {
+    const dayIndex = date.getUTCDay();
+    const mondayFirstIndex = (dayIndex + 6) % 7;
+    return dayKeys[mondayFirstIndex];
   };
 
   const weekOffsets = Array.from({ length: WEEK_SLIDE_RANGE * 2 + 1 }, (_, i) => i - WEEK_SLIDE_RANGE);
@@ -70,7 +63,9 @@ function ReportWeekly() {
             diaryTexts.push(diary.diary);
           }
         });
+
         setWeeklyData(dayMap);
+
         const mergedText = diaryTexts.join(" ");
         const extracted = extractWordFrequency(mergedText).map((w) => ({
           text: w.text,
@@ -87,37 +82,39 @@ function ReportWeekly() {
     fetchWeeklyDiary();
   }, [selectedDate]);
 
-
-
   return (
     <div className="px-1 pt-0 pb-6 font-PRegular">
       <h2
-  className="text-lg font-PBold text-center mt-0 mb-2 cursor-pointer"
-  onClick={() => setShowCalendar(!showCalendar)}
->
-  {formatWeekKey(selectedDate)}
-</h2>
+        className="text-lg font-PBold text-center mt-0 mb-2 cursor-pointer"
+        onClick={() => setShowPicker(!showPicker)}
+      >
+        {formatWeekKey(selectedDate)}
+      </h2>
+
+      {showPicker && (
+        <div className="flex justify-center mb-4 z-50">
+          <DatePicker
+  inline
+  selected={toLocalMidnight(selectedDate)}
+  onChange={(date: Date | null) => {
+    if (date) {
+      const utcDate = toUTCStartOfDay(date);
+      setSelectedDate(utcDate);
+      setShowPicker(false);
+    }
+  }}
+  calendarStartDay={1}
+  dayClassName={(date) => {
+    const isToday =
+      date.getUTCFullYear() === todayUTC.getUTCFullYear() &&
+      date.getUTCMonth() === todayUTC.getUTCMonth() &&
+      date.getUTCDate() === todayUTC.getUTCDate();
+
+    return isToday ? "my-utc-today" : "";
+  }}
+/>
 
 
-      {showCalendar && (
-        <div className="flex justify-center mb-4">
-          <Calendar
-            locale="en-US"                // 영어 표기
-            calendarType="iso8601"      // 
-            tileClassName={({ date }) => {
-              const isToday = new Date().toDateString() === date.toDateString();
-
-              return isToday
-                ? "bg-green-100 border border-green-500 font-semibold text-green-700"
-                : "text-black"; // 모든 요일 통일, 빨간색 제거
-            }}
-            value={selectedDate}
-            onChange={(value) => {
-              const date = value as Date;
-              setSelectedDate(date);
-              setShowCalendar(false);
-            }}
-          />
         </div>
       )}
 
@@ -142,7 +139,6 @@ function ReportWeekly() {
 
           return (
             <SwiperSlide key={key}>
-
               <div className="w-full max-w-[900px] mx-auto px-2">
                 <div
                   className="h-[220px] bg-white rounded border border-gray-200 p-4"
@@ -163,11 +159,7 @@ function ReportWeekly() {
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis
-                        dataKey="day"
-                        ticks={dayKeys as unknown as (string | number)[]}
-                      />
-
+                      <XAxis dataKey="day" ticks={[...dayKeys]} />
                       <YAxis domain={[0, 3]} ticks={[0, 1, 2, 3]} allowDecimals={false} />
                       <Tooltip />
                       <Area
@@ -205,6 +197,14 @@ function ReportWeekly() {
   );
 }
 
+// ✅ UTC 자정 기준 Date 생성
+function toUTCStartOfDay(date: Date): Date {
+  return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+}
+
+// ✅ UTC → 로컬 자정 기준 Date 변환 (선택된 날짜를 정확히 표시하기 위함)
+function toLocalMidnight(date: Date): Date {
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
 export default ReportWeekly;
-
-
