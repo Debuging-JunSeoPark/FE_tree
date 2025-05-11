@@ -6,6 +6,7 @@ import Header from "../components/Header";
 import { postLogin } from "../apis/auth";
 import Cookies from "js-cookie";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,19 +15,18 @@ function Login() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("이메일과 비밀번호를 모두 입력해주세요.");
+      toast.error("Please enter both email and password.");
       return;
     }
-
+  
     try {
       const res = await postLogin({ email, password });
-      alert("로그인 성공!");
-
-      // ✅ 쿠키에 토큰 저장 (1일 유지)
+      toast.success("Login successful!");
+  
+      // Store tokens in cookies (valid for 1 day)
       Cookies.set("accessToken", res.token, { expires: 1 });
-
-      // 다른 정보도 필요하면 저장 가능
       Cookies.set("userId", res.id.toString());
+  
       if (res.profileComplete) {
         navigate("/");
       } else {
@@ -35,14 +35,14 @@ function Login() {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
-          alert("이메일 또는 비밀번호가 올바르지 않습니다.");
+          toast.error("Invalid email or password.");
         } else {
-          alert("로그인 중 오류가 발생했습니다.");
-          console.error("로그인 실패", error);
+          toast.error("An error occurred while logging in.");
+          console.error("Login failed", error);
         }
       } else {
-        alert("예기치 못한 오류가 발생했습니다.");
-        console.error("알 수 없는 오류", error);
+        toast.error("An unexpected error occurred.");
+        console.error("Unknown error", error);
       }
     }
   };
@@ -102,14 +102,6 @@ function Login() {
 
       {/* 로그인 버튼 */}
       <GetStartedButton className="mt-6" label="LOG IN" onClick={handleLogin} />
-
-      {/* 추가 메뉴 */}
-      <button
-        className="mt-3 text-sm text-gray-600 underline"
-        onClick={() => alert("비밀번호 찾기 기능 준비 중")}
-      >
-        Forgot Password?
-      </button>
 
       <p className="text-gray-400 text-sm mt-4">
         Don't have an account?{" "}

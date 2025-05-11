@@ -3,3 +3,9 @@ export interface UserProfile {
   avatar: string;
   email: string;
 }
+
+export interface UpdateProfile {
+  nickname: string;
+  avatar: string;
+ 
+}

@@ -1,12 +1,12 @@
 import instance from "./instance";
-import { UserProfile } from "./user.type";
+import { UserProfile, UpdateProfile} from "./user.type";
 
 export const putUserProfile = async (
-  data: UserProfile
-): Promise<UserProfile> => {
+  data: UpdateProfile
+): Promise<UpdateProfile> => {
   {
     try {
-      const response = await instance.put<UserProfile>(
+      const response = await instance.put<UpdateProfile>(
         "/api/user/profile",
         data
       );

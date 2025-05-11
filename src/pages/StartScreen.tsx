@@ -56,20 +56,24 @@ function StartScreen() {
   return (
     <div className="w-full h-screen relative bg-gradient-to-b from-main to-[#964B00] overflow-hidden">
       {/* 로고 + 슬로건: y 위치 비율로 따라 이동 */}
-      <AnimatedDivAny
-        className="absolute w-full h-screen flex flex-col items-center justify-center z-10"
-        style={{
-          transform: yForLogo.to((py) => {
-            const ratio = 0.6;
-            const offset = py - (window.innerHeight - peekHeight);
-            return `translateY(${offset * ratio}px)`;
-          }),
-        }}
-      >
-        <img src={splashlogo} alt="로고" className="w-25 h-auto" />
-        <div className="font-PMedium text-lg text-white">slogan</div>
-      </AnimatedDivAny>
+     <AnimatedDivAny
+  className="absolute w-full h-screen flex flex-col items-center justify-center z-10"
+  style={{
+    transform: yForLogo.to((py) => {
+      const ratio = 0.6;
+      const offset = py - (window.innerHeight - peekHeight);
+      return `translateY(${offset * ratio}px)`;
+    }),
+  }}
+>
+  {/* 로고 크기 명확히 지정 */}
+  <img src={splashlogo} alt="로고" className="w-32 h-auto mb-3" />
 
+  {/* 가운데 정렬 + 줄바꿈 방지 */}
+  <div className="font-PMedium text-lg text-white text-center leading-snug px-4">
+  Are you ready to grow?
+  </div>
+</AnimatedDivAny>
 
 
 
@@ -89,9 +93,9 @@ function StartScreen() {
           <img src={icon} alt="아이콘" className="w-35 h-35 rounded-full" />
           <div className="font-PBold text-3xl text-Title">We are what we do</div>
           <div className="text-center font-PRegular text-sub text-base">
-            This service integrates emotion tracking and <br />
-            self-assessment to provide a structured approach <br />
-            to managing mental health in today’s society.
+          This service gently follows<br />
+          the emotions in your subconscious,<br />
+          helping you rediscover your inner self.
           </div>
           <div className="flex flex-col gap-5">
             <button

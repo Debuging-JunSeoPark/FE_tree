@@ -1,6 +1,10 @@
 import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import icon from "../assets/images/Icon.png";
+import cicon from "../assets/images/cherryBlossomIcon.png";
+import yicon from "../assets/images/forsythiaIcon.png";
+import { getUserProfile } from "../apis/user";
+
 import { FaChevronDown } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -12,6 +16,19 @@ interface WeeklyProps {
 
 function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string>("GREEN");
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const user = await getUserProfile();
+        setAvatar(user.avatar);
+      } catch (error) {
+        console.error("유저 아바타 정보 불러오기 실패", error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
 
   const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
 
@@ -24,6 +41,12 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
       isSelected: isSameDay(day, selectedDate),
     };
   });
+
+  const getSelectedIcon = () => {
+    if (avatar === "PINK") return cicon;
+    if (avatar === "YELLOW") return yicon;
+    return icon;
+  };
 
   return (
     <div className="flex flex-col m-1">
@@ -67,7 +90,7 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
             <div>{day.label}</div>
             <div className="flex items-center justify-center rounded-full w-8 h-8">
               {day.isSelected ? (
-                <img src={icon} alt="selected" className="rounded-full" />
+                <img src={getSelectedIcon()} alt="selected" className="rounded-full" />
               ) : (
                 <div className="bg-[#d9d9d9] text-white w-full h-full flex items-center justify-center rounded-full text-sm">
                   {day.date}

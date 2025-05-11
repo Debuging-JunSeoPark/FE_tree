@@ -10,7 +10,9 @@ import Splash from "./pages/Splash";
 import StartScreen from "./pages/StartScreen";
 import Signup from "./pages/Signup";
 import { useEffect, useState } from "react";
-import { checkAuth } from "./utils/auth"; // ✅ auth 유틸 import
+import { checkAuth } from "./utils/auth"; 
+import { Toaster } from "react-hot-toast";
+import Notifications from "./pages/Notifications";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -59,6 +61,15 @@ function App() {
             return null;
           },
         },
+        {
+          path: "/notifications",
+          element: <Notifications />,
+          loader: () => {
+            checkAuth();
+            return null;
+          },
+        },
+
       ],
     },
     {
@@ -83,6 +94,24 @@ function App() {
 
   return (
     <div>
+       <Toaster
+  position="top-center"
+  toastOptions={{
+    duration: 3000,
+    success: {
+      style: {
+        background: "#E6F4EA",
+        color: "#0F9D58",
+      },
+    },
+    error: {
+      style: {
+        background: "#FDEAEA",
+        color: "#D93025",
+      },
+    },
+  }}
+/>
       <RouterProvider router={router} />
     </div>
   );

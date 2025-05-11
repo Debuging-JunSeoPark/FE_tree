@@ -4,8 +4,15 @@ import Weekly from "../components/Weekly";
 import QuestionList from "../components/QuestionList";
 
 function Record() {
+  const getTimeSlotByUTC = (): "Morning" | "Lunch" | "Evening" => {
+    const hour = new Date().getUTCHours();
+    if (hour >= 5 && hour < 12) return "Morning";
+    if (hour >= 12 && hour < 18) return "Lunch";
+    return "Evening";
+  };
+
   const [selected, setSelected] = useState<"Morning" | "Lunch" | "Evening">(
-    "Morning"
+    getTimeSlotByUTC()
   );
   const getUTCDate = () => {
     const now = new Date();
