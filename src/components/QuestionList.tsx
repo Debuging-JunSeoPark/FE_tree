@@ -5,9 +5,14 @@ import { DiaryContent, QType } from "../apis/diary.type";
 interface QuestionListProps {
   selectedSlot: "Morning" | "Lunch" | "Dinner";
   setSelectedSlot: (slot: "Morning" | "Lunch" | "Dinner") => void;
+  selectedDate: Date;
 }
 
-function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
+function QuestionList({
+  selectedSlot,
+  setSelectedSlot,
+  selectedDate,
+}: QuestionListProps) {
   const questions = [
     "What are your plans for today? How do you feel as you start your day?",
     "Is your day going well so far? Have there been any events that influenced your mood?",
@@ -49,9 +54,9 @@ function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
       const filledAnswers = new Array(3).fill("");
       const filledSubmitted = new Array(3).fill(false);
 
-      const todayStart = new Date();
+      const todayStart = new Date(selectedDate);
       todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date();
+      const todayEnd = new Date(selectedDate);
       todayEnd.setHours(23, 59, 59, 999);
 
       const start = todayStart.toISOString();
@@ -65,7 +70,7 @@ function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
           const match = response.diaries.find((entry) => entry.qtype === qtype);
           if (match) {
             const parsed: DiaryContent = JSON.parse(match.diary);
-            console.log(parsed);
+            console.log("hi: ", parsed);
             if (parsed?.content && typeof parsed.content === "string") {
               filledAnswers[index] = parsed.content;
               filledSubmitted[index] = true;
@@ -81,7 +86,7 @@ function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
     };
 
     fetchAnswers();
-  }, []);
+  }, [selectedDate]);
 
   const toggleQuestion = (index: number) => {
     const slot = getSlotByIndex(index);
@@ -94,7 +99,7 @@ function QuestionList({ selectedSlot, setSelectedSlot }: QuestionListProps) {
     try {
       const diaryContent: DiaryContent = {
         content: answers[index],
-        questionIndex: index,
+        //questionIndex: index,
       };
 
       await postDiary({

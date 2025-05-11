@@ -1,10 +1,14 @@
 import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-import { useState } from "react";
+//import { useState } from "react";
 import icon from "../assets/images/Icon.png";
 
-function Weekly() {
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState<Date>(today);
+interface WeeklyProps {
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
+}
+function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
+  //const today = new Date();
+  //const [selectedDate, setSelectedDate] = useState<Date>(today);
   const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
 
   const week = Array.from({ length: 7 }, (_, i) => {

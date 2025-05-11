@@ -8,6 +8,7 @@ function Record() {
   const [selected, setSelected] = useState<"Morning" | "Lunch" | "Dinner">(
     "Morning"
   );
+  const [selectedDate, setSelectedDate] = useState(new Date());
   // const convertToQTye = (slot: string): QType => slot.toLowerCase() as QType;
 
   // const getListIndex = (slot: "Morning" | "Lunch" | "Dinner") => {
@@ -18,7 +19,7 @@ function Record() {
 
   return (
     <div className="flex flex-col gap-1">
-      <Weekly />
+      <Weekly selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
       <TimeSlotSelector selected={selected} setSelected={setSelected} />
       <div className="flex flex-col">
         <div className="font-PSemiBold text-lg text-Title">
@@ -29,7 +30,11 @@ function Record() {
         </div>
       </div>
       {/*질문리스트*/}
-      <QuestionList selectedSlot={selected} setSelectedSlot={setSelected} />
+      <QuestionList
+        selectedSlot={selected}
+        setSelectedSlot={setSelected}
+        selectedDate={selectedDate}
+      />
     </div>
   );
 }
