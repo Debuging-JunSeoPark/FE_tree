@@ -74,7 +74,7 @@ function QuestionList({
           start.toISOString(),
           end.toISOString()
         );
-
+        console.log("답변 조회 성공", response);
         for (let index = 0; index < 3; index++) {
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);

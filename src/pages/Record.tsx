@@ -2,20 +2,19 @@ import { useState } from "react";
 import TimeSlotSelector from "../components/TimeSlotSelector";
 import Weekly from "../components/Weekly";
 import QuestionList from "../components/QuestionList";
-//import { QType } from "../apis/diary.type";
 
 function Record() {
   const [selected, setSelected] = useState<"Morning" | "Lunch" | "Evening">(
     "Morning"
   );
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  // const convertToQTye = (slot: string): QType => slot.toLowerCase() as QType;
+  const getUTCDate = () => {
+    const now = new Date();
+    return new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
+  };
 
-  // const getListIndex = (slot: "Morning" | "Lunch" | "Dinner") => {
-  //   if (slot === "Morning") return 0;
-  //   if (slot === "Lunch") return 1;
-  //   return 2;
-  // };
+  const [selectedDate, setSelectedDate] = useState(getUTCDate());
 
   return (
     <div className="flex flex-col gap-1">
