@@ -5,7 +5,7 @@ import QuestionList from "../components/QuestionList";
 //import { QType } from "../apis/diary.type";
 
 function Record() {
-  const [selected, setSelected] = useState<"Morning" | "Lunch" | "Dinner">(
+  const [selected, setSelected] = useState<"Morning" | "Lunch" | "Evening">(
     "Morning"
   );
   const [selectedDate, setSelectedDate] = useState(new Date());

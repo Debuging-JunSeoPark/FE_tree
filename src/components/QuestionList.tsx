@@ -3,8 +3,8 @@ import { getPeriodDiary, postDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
 
 interface QuestionListProps {
-  selectedSlot: "Morning" | "Lunch" | "Dinner";
-  setSelectedSlot: (slot: "Morning" | "Lunch" | "Dinner") => void;
+  selectedSlot: "Morning" | "Lunch" | "Evening";
+  setSelectedSlot: (slot: "Morning" | "Lunch" | "Evening") => void;
   selectedDate: Date;
 }
 
@@ -22,19 +22,19 @@ function QuestionList({
   const getQTypeByIndex = (index: number): QType => {
     if (index === 0) return "morning";
     if (index === 1) return "lunch";
-    return "dinner";
+    return "evening";
   };
 
-  const getIndexBySlot = (slot: "Morning" | "Lunch" | "Dinner"): number => {
+  const getIndexBySlot = (slot: "Morning" | "Lunch" | "Evening"): number => {
     if (slot === "Morning") return 0;
     if (slot === "Lunch") return 1;
     return 2;
   };
 
-  const getSlotByIndex = (index: number): "Morning" | "Lunch" | "Dinner" => {
+  const getSlotByIndex = (index: number): "Morning" | "Lunch" | "Evening" => {
     if (index === 0) return "Morning";
     if (index === 1) return "Lunch";
-    return "Dinner";
+    return "Evening";
   };
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(
@@ -54,27 +54,43 @@ function QuestionList({
       const filledAnswers = new Array(3).fill("");
       const filledSubmitted = new Array(3).fill(false);
 
-      const todayStart = new Date(selectedDate);
-      todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date(selectedDate);
-      todayEnd.setHours(23, 59, 59, 999);
-
-      const start = todayStart.toISOString();
-      const end = todayEnd.toISOString();
+      // UTC 기준 자정부터 하루 끝까지 설정
+      const localDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const start = new Date(
+        Date.UTC(
+          localDate.getFullYear(),
+          localDate.getMonth(),
+          localDate.getDate()
+        )
+      );
+      const end = new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1);
 
       try {
-        const response = await getPeriodDiary(start, end);
+        const response = await getPeriodDiary(
+          start.toISOString(),
+          end.toISOString()
+        );
 
         for (let index = 0; index < 3; index++) {
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);
           if (match) {
-            const parsed: DiaryContent = JSON.parse(match.diary);
-            console.log("hi: ", parsed);
-            if (parsed?.content && typeof parsed.content === "string") {
-              filledAnswers[index] = parsed.content;
-              filledSubmitted[index] = true;
+            let content = "";
+            try {
+              const parsed = JSON.parse(match.diary);
+              if (parsed && typeof parsed.content === "string") {
+                content = parsed.content;
+              }
+            } catch {
+              content = match.diary; // 일반 문자열일 경우
             }
+
+            filledAnswers[index] = content;
+            filledSubmitted[index] = true;
           }
         }
 
@@ -90,7 +106,7 @@ function QuestionList({
 
   const toggleQuestion = (index: number) => {
     const slot = getSlotByIndex(index);
-    setSelectedSlot(slot); // ✅ 타임슬롯 선택 반영
+    setSelectedSlot(slot);
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
 
@@ -99,7 +115,6 @@ function QuestionList({
     try {
       const diaryContent: DiaryContent = {
         content: answers[index],
-        //questionIndex: index,
       };
 
       await postDiary({
@@ -153,7 +168,9 @@ function QuestionList({
             {isSelected && (
               <div className="px-4 pb-3">
                 {isAnswered ? (
-                  <div>{answers[index]}</div>
+                  <div className="w-full whitespace-pre-wrap break-words overflow-y-auto">
+                    {answers[index]}
+                  </div>
                 ) : (
                   <>
                     <textarea
