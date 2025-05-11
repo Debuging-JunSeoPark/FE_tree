@@ -5,10 +5,13 @@ import greenIcon from "../assets/images/treeIcon.svg";
 import yellowIcon from "../assets/images/forsythiaIcon.svg";
 import pinkIcon from "../assets/images/cherryBlossomIcon.svg";
 import { getUserProfile } from "../apis/user";
+import { getPeriodDiary } from "../apis/diary";
 
 function Home() {
   const [nickname, setNickname] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
+  const [answeredCount, setAnsweredCount] = useState<number>(0);
+  
   const getAvatarImage = (avatar: string | null): string => {
     switch (avatar) {
       case "GREEN":
@@ -35,7 +38,38 @@ function Home() {
     userInfo();
   }, []);
 
-  const answeredCount = 90;
+  const getStartOfMonth = (): string => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  };
+  
+  const getToday = (): string => {
+    return new Date().toISOString();
+  };
+
+  useEffect(() => {
+    const fetchAnsweredCount = async () => {
+      try {
+        const start = getStartOfMonth();
+        const end = getToday();
+        const res = await getPeriodDiary(start, end);
+  
+        setAnsweredCount(res.count); 
+  
+      } catch (error) {
+        console.error("이번 달 일기 수 조회 실패", error);
+      }
+    };
+  
+    fetchAnsweredCount();
+  }, []);
+
+  const getDaysInMonth = (date: Date): number => {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+};
+
+const totalCount = getDaysInMonth(new Date()) * 3;
+
   return (
     <div className="flex flex-col justify-center items-stretch h-full gap-4 w-full px-4">
 
@@ -59,7 +93,8 @@ function Home() {
         </div>
         <div className="flex flex-col justify-center p-3 gap-2 w-full max-w-[25rem] min-h-[8rem] rounded-xl border-2 border-homeBorder shadow-lg bg-white">
  
-  <TreeTrunk answeredCount={answeredCount} />
+        <TreeTrunk answeredCount={answeredCount} totalCount={totalCount} />
+
 </div>
       </div>
       <div>
