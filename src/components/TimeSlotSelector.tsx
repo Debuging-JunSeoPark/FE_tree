@@ -12,12 +12,11 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
   const timeSlots: {
     id: number;
     label: "Morning" | "Lunch" | "Evening";
-    count: string;
     src: string;
   }[] = [
-    { id: 1, label: "Morning", count: "1/3", src: treeMorning },
-    { id: 2, label: "Lunch", count: "2/3", src: treeLunch },
-    { id: 3, label: "Evening", count: "3/3", src: treeEvening },
+    { id: 1, label: "Morning", src: treeMorning },
+    { id: 2, label: "Lunch", src: treeLunch },
+    { id: 3, label: "Evening", src: treeEvening },
   ];
   return (
     <div className="flex flex-row items-center justify-around gap-2 m-2 mt-4">
@@ -38,8 +37,7 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
               alt={slot.label}
               className="rounded-full w-12 h-12"
             />
-            <div>{slot.label}</div>
-            <div>{slot.count}</div>
+            <div className="mt-1">{slot.label}</div>
           </div>
         );
       })}
