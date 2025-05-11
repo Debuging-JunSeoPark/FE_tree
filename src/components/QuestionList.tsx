@@ -69,12 +69,18 @@ function QuestionList({
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);
           if (match) {
-            const parsed: DiaryContent = JSON.parse(match.diary);
-            console.log("hi: ", parsed);
-            if (parsed?.content && typeof parsed.content === "string") {
-              filledAnswers[index] = parsed.content;
-              filledSubmitted[index] = true;
+            let content = "";
+            try {
+              const parsed = JSON.parse(match.diary);
+              if (parsed && typeof parsed.content === "string") {
+                content = parsed.content;
+              }
+            } catch {
+              // JSON 파싱 실패 → 그냥 문자열 그대로 사용
+              content = match.diary;
             }
+            filledAnswers[index] = content;
+            filledSubmitted[index] = true;
           }
         }
 
