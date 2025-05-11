@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -8,160 +8,202 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import WordCloud, { Word } from "../components/WordCloud"; // 추가
+import WordCloud, { Word } from "../components/WordCloud";
 import { extractWordFrequency } from "../utils/extractWordFrequency";
+import { getPeriodDiary } from "../apis/diary";
+import { getStartAndEndOfWeek } from "../utils/getStartAndEndOfWeek";
+import { formatWeekKey } from "../utils/formatWeekKey";
 
-type DayData = { day: string; count: number };
-type WeekKey = "2025 Apr week1" | "2025 Apr week2" | "2025 Apr week3";
 
-const dummyWeeklyData: Record<WeekKey, DayData[]> = {
-  "2025 Apr week1": [
-    { day: "Mon", count: 2 },
-    { day: "Tue", count: 3 },
-    { day: "Wed", count: 1 },
-    { day: "Thu", count: 3 },
-    { day: "Fri", count: 2 },
-    { day: "Sat", count: 0 },
-    { day: "Sun", count: 0 },
-  ],
-  "2025 Apr week2": [
-    { day: "Mon", count: 3 },
-    { day: "Tue", count: 2 },
-    { day: "Wed", count: 2 },
-    { day: "Thu", count: 1 },
-    { day: "Fri", count: 3 },
-    { day: "Sat", count: 1 },
-    { day: "Sun", count: 1 },
-  ],
-  "2025 Apr week3": [
-    { day: "Mon", count: 1 },
-    { day: "Tue", count: 2 },
-    { day: "Wed", count: 3 },
-    { day: "Thu", count: 2 },
-    { day: "Fri", count: 1 },
-    { day: "Sat", count: 2 },
-    { day: "Sun", count: 1 },
-  ],
-};
-const dummyTextData: Record<WeekKey, string> = {
-  "2025 Apr week1": `
-    This week was a rollercoaster of emotions. I started off feeling incredibly happy and focused, 
-    diving into work with energy and enthusiasm. By midweek, I was slightly tired, but still 
-    motivated to keep pushing forward. I took breaks to stay calm and reflect on my progress. 
-    The weekend brought a sense of excitement, and I allowed myself to rest, recover, and 
-    recharge for the next week ahead.`,
 
-  "2025 Apr week2": `
-    Workload increased significantly this week. I felt tired and overwhelmed at times, 
-    but I reminded myself of the goals I had set earlier in the month. Despite the stress, 
-    I managed to stay organized and maintain a steady rhythm. I tried meditating in the evenings 
-    to regain focus and reduce anxiety. Rest was my top priority over the weekend.`,
-
-  "2025 Apr week3": `
-    This week felt more relaxed and enjoyable. I played games with friends, spent quality time 
-    alone reading, and reflected on the positive moments of the past few days. There was a 
-    balance between productivity and relaxation. Taking small breaks helped me stay 
-    motivated and even sparked some new ideas for future projects.`,
-};
-const dummyWordData: Record<WeekKey, Word[]> = Object.fromEntries(
-  Object.entries(dummyTextData).map(([week, text]) => [
-    week,
-    extractWordFrequency(text).map(w => ({
-      text: w.text,
-      value: w.value * 1,
-    })),
-  ])
-) as Record<WeekKey, Word[]>;
-const weekKeys = Object.keys(dummyWeeklyData) as WeekKey[];
+const dayKeys = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+type DayKey = (typeof dayKeys)[number];
 
 function ReportWeekly() {
-  const [activeIndex, setActiveIndex] = useState(1);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  const getDayNameFromDate = (date: Date): DayKey => {
+    const dayIndex = date.getDay(); // 0 (Sun) ~ 6 (Sat)
+    const mondayFirstIndex = (dayIndex + 6) % 7; // → 0 (Mon) ~ 6 (Sun)
+    return dayKeys[mondayFirstIndex];
+  };
+  const [weeklyData, setWeeklyData] = useState<Record<DayKey, number>>({
+    Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0,
+  });
+  const [wordData, setWordData] = useState<Word[]>([]);
+
+  const WEEK_SLIDE_RANGE = 2;
+  const today = new Date();
+
+  const generateDateByOffset = (offset: number) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + offset * 7);
+    return d;
+  };
+
+  const weekOffsets = Array.from({ length: WEEK_SLIDE_RANGE * 2 + 1 }, (_, i) => i - WEEK_SLIDE_RANGE);
+
+  useEffect(() => {
+    const fetchWeeklyDiary = async () => {
+      try {
+        const { start, end } = getStartAndEndOfWeek(selectedDate);
+        const res = await getPeriodDiary(start.toISOString(), end.toISOString());
+
+        const dayMap: Record<DayKey, number> = {
+          Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0,
+        };
+        const diaryTexts: string[] = [];
+
+        res.diaries.forEach((diary) => {
+          const dayName = getDayNameFromDate(new Date(diary.createdAt));
+          dayMap[dayName] = Math.min(dayMap[dayName] + 1, 3);
+        
+          try {
+            const parsed = JSON.parse(diary.diary);
+            if (parsed.content) diaryTexts.push(parsed.content);
+          } catch {
+            diaryTexts.push(diary.diary);
+          }
+        });
+        setWeeklyData(dayMap);
+        const mergedText = diaryTexts.join(" ");
+        const extracted = extractWordFrequency(mergedText).map((w) => ({
+          text: w.text,
+          value: w.value,
+        }));
+        setWordData(extracted);
+      } catch (error) {
+        console.error("주간 일기 조회 실패", error);
+        setWeeklyData({ Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 });
+        setWordData([]);
+      }
+    };
+
+    fetchWeeklyDiary();
+  }, [selectedDate]);
+
+
 
   return (
     <div className="px-1 py-6 font-PRegular">
-      <h2 className="text-2xl font-PBold mb-2 text-center">
-        {weekKeys[activeIndex]}
+      <h2
+        className="text-2xl font-PBold mb-2 text-center cursor-pointer"
+        onClick={() => setShowCalendar(!showCalendar)}
+      >
+        {formatWeekKey(selectedDate)}
       </h2>
+
+      {showCalendar && (
+        <div className="flex justify-center mb-4">
+          <Calendar
+            locale="en-US"                // 영어 표기
+            calendarType="iso8601"      // 
+            tileClassName={({ date }) => {
+              const isToday = new Date().toDateString() === date.toDateString();
+
+              return isToday
+                ? "bg-green-100 border border-green-500 font-semibold text-green-700"
+                : "text-black"; // 모든 요일 통일, 빨간색 제거
+            }}
+            value={selectedDate}
+            onChange={(value) => {
+              const date = value as Date;
+              setSelectedDate(date);
+              setShowCalendar(false);
+            }}
+          />
+        </div>
+      )}
 
       <p className="text-left text-base font-PMedium text-gray-800 mb-2">
         Daily Progress Details
       </p>
 
-
       <Swiper
         spaceBetween={30}
-        onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-        initialSlide={1}
         centeredSlides={true}
         slidesPerView={1}
+        initialSlide={WEEK_SLIDE_RANGE}
+        onSlideChange={(swiper) => {
+          const offset = swiper.activeIndex - WEEK_SLIDE_RANGE;
+          const newDate = generateDateByOffset(offset);
+          setSelectedDate(newDate);
+        }}
       >
-        {weekKeys.map((week, idx) => (
-          <SwiperSlide key={week}>
-            <div className="w-full max-w-[900px] mx-auto px-2">
-            <div
-  className="h-[220px] bg-white rounded border border-gray-200 p-4"
-  style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
->
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={dummyWeeklyData[week]}
-                    margin={{ top: 10, right: 30, left: -30, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id={`colorCount-${idx}`}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop offset="5%" stopColor="#0F9D58" stopOpacity={0.8} />
-                        <stop offset="95%" stopColor="#FFFED9" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="day"
-                      ticks={["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}
-                    />
-                    <YAxis
-                      domain={[0, 3]}
-                      ticks={[0, 1, 2, 3]}
-                      allowDecimals={false}
-                    />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="count"
-                      stroke="#0F9D58"
-                      fillOpacity={1}
-                      fill={`url(#colorCount-${idx})`}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
+        {weekOffsets.map((offset) => {
+          const slideDate = generateDateByOffset(offset);
+          const key = formatWeekKey(slideDate);
 
-              {/* ✅ 워드 클라우드 추가 */}
-              <div className="mt-4">
-                <p className="text-left text-base font-PMedium text-gray-800 mb-2">
-                  Frequently used words
-                </p>
+          return (
+            <SwiperSlide key={key}>
+
+              <div className="w-full max-w-[900px] mx-auto px-2">
                 <div
-  className="h-[220px] bg-white rounded border border-gray-200 p-4 overflow-hidden flex justify-center items-center"
-  style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
->
-                  <WordCloud words={dummyWordData[week]} width={600} height={200} />
+                  className="h-[220px] bg-white rounded border border-gray-200 p-4"
+                  style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                      data={dayKeys.map((day) => ({
+                        day,
+                        count: weeklyData[day],
+                      }))}
+                      margin={{ top: 10, right: 30, left: -30, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#0F9D58" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#FFFED9" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis
+                        dataKey="day"
+                        ticks={dayKeys as unknown as (string | number)[]}
+                      />
+
+                      <YAxis domain={[0, 3]} ticks={[0, 1, 2, 3]} allowDecimals={false} />
+                      <Tooltip />
+                      <Area
+                        type="monotone"
+                        dataKey="count"
+                        stroke="#0F9D58"
+                        fillOpacity={1}
+                        fill="url(#colorCount)"
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-left text-base font-PMedium text-gray-800 mb-2">
+                    Frequently used words
+                  </p>
+                  <div
+                    className="h-[220px] bg-white rounded border border-gray-200 p-4 overflow-hidden flex justify-center items-center"
+                    style={{ boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.08)" }}
+                  >
+                    {wordData.length === 0 ? (
+                      <p className="text-gray-400 text-sm italic">No diary entries this week.</p>
+                    ) : (
+                      <WordCloud words={wordData} width={600} height={200} />
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
-
     </div>
   );
 }
 
 export default ReportWeekly;
+
+
