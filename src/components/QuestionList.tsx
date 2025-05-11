@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDiaryList, postDiary } from "../apis/diary";
+import { getPeriodDiary, postDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
 
 interface QuestionTypeProps {
@@ -20,6 +20,7 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
   const [submitted, setSubmitted] = useState<boolean[]>(
     new Array(questions.length).fill(false)
   );
+
   useEffect(() => {
     setSelectedIndex(listIndex);
   }, [listIndex]);
@@ -28,19 +29,34 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
     const fetchAnswers = async () => {
       const filledAnswers = new Array(3).fill("");
       const filledSubmitted = new Array(3).fill(false);
+
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999);
+
+      const start = todayStart.toISOString(); // e.g. 2025-05-11T00:00:00.000Z
+      const end = todayEnd.toISOString();
+
       try {
-        const response = await getDiaryList(qtype);
-        response.forEach((entry, idx) => {
+        const response = await getPeriodDiary(start, end); // ✅ 포맷된 날짜 전달
+        const todayDiaries = response.diaries.filter(
+          (entry) => entry.qtype === qtype
+        );
+
+        todayDiaries.forEach((entry, idx) => {
           const parsed: DiaryContent = JSON.parse(entry.diary);
           filledAnswers[idx] = parsed.content;
           filledSubmitted[idx] = true;
         });
+
         setAnswers(filledAnswers);
         setSubmitted(filledSubmitted);
       } catch (error) {
         console.error("답변 조회 실패", error);
       }
     };
+
     fetchAnswers();
   }, [qtype]);
 
@@ -52,7 +68,7 @@ function QuestionList({ qtype, listIndex = 0 }: QuestionTypeProps) {
     try {
       const diaryContent = { content: answers[index] };
       await postDiary({
-        qtype: "morning", //나중에 props로 수정
+        qtype: qtype,
         diary: JSON.stringify(diaryContent),
       });
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));

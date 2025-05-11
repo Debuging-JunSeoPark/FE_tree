@@ -18,3 +18,16 @@ export interface DiaryResponse {
 }
 
 export type DiaryResponseList = DiaryResponse[]; //질문 유형별 다이어리 조회
+
+export interface DiaryItem {
+  diaryId: number;
+  userId: number;
+  qtype: QType;
+  diary: string;
+  createdAt: string;
+}
+
+export interface DiaryListResponse {
+  diaries: DiaryItem[];
+  count: number;
+}

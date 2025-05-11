@@ -1,4 +1,5 @@
 import {
+  DiaryListResponse,
   DiaryResponse,
   DiaryResponseList,
   PostDiaryRequest,
@@ -28,6 +29,24 @@ export const getDiaryList = async (
     return response.data;
   } catch (error) {
     console.error("일기 조회 실패", error);
+    throw error;
+  }
+};
+
+export const getPeriodDiary = async (
+  start: string,
+  end: string
+): Promise<DiaryListResponse> => {
+  try {
+    const response = await instance.get<DiaryListResponse>(
+      "/api/diary/period",
+      {
+        params: { start: start, end: end },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("기간별 일기 조회 실패", error);
     throw error;
   }
 };
