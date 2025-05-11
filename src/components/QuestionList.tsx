@@ -54,17 +54,27 @@ function QuestionList({
       const filledAnswers = new Array(3).fill("");
       const filledSubmitted = new Array(3).fill(false);
 
-      const todayStart = new Date(selectedDate);
-      todayStart.setHours(0, 0, 0, 0);
-      const todayEnd = new Date(selectedDate);
-      todayEnd.setHours(23, 59, 59, 999);
-
-      const start = todayStart.toISOString();
-      const end = todayEnd.toISOString();
+      // UTC 기준 자정부터 하루 끝까지 설정
+      const localDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const start = new Date(
+        Date.UTC(
+          localDate.getFullYear(),
+          localDate.getMonth(),
+          localDate.getDate()
+        )
+      );
+      const end = new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1);
 
       try {
-        const response = await getPeriodDiary(start, end);
-        console.log(response);
+        const response = await getPeriodDiary(
+          start.toISOString(),
+          end.toISOString()
+        );
+
         for (let index = 0; index < 3; index++) {
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);
@@ -76,9 +86,9 @@ function QuestionList({
                 content = parsed.content;
               }
             } catch {
-              // JSON 파싱 실패 → 그냥 문자열 그대로 사용
-              content = match.diary;
+              content = match.diary; // 일반 문자열일 경우
             }
+
             filledAnswers[index] = content;
             filledSubmitted[index] = true;
           }
@@ -96,7 +106,7 @@ function QuestionList({
 
   const toggleQuestion = (index: number) => {
     const slot = getSlotByIndex(index);
-    setSelectedSlot(slot); // ✅ 타임슬롯 선택 반영
+    setSelectedSlot(slot);
     setSelectedIndex((prev) => (prev === index ? null : index));
   };
 
@@ -105,7 +115,6 @@ function QuestionList({
     try {
       const diaryContent: DiaryContent = {
         content: answers[index],
-        //questionIndex: index,
       };
 
       await postDiary({

@@ -14,6 +14,7 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+
   const week = Array.from({ length: 7 }, (_, i) => {
     const day = addDays(start, i);
     return {
