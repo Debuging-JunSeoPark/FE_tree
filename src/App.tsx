@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Layout from "./layout/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -7,18 +7,19 @@ import Report from "./pages/Report";
 import Mypage from "./pages/Mypage";
 import SelectAvatar from "./pages/SelectAvatar";
 import Splash from "./pages/Splash";
-import { useEffect, useState } from "react";
 import StartScreen from "./pages/StartScreen";
 import Signup from "./pages/Signup";
+import { useEffect, useState } from "react";
+import { checkAuth } from "./utils/auth"; // ✅ auth 유틸 import
 
 function App() {
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // 2초 후에 로딩 상태 변경
-
-    return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 정리
+    }, 2000); // 스플래시 2초 표시
+    return () => clearTimeout(timer);
   }, []);
 
   const router = createBrowserRouter([
@@ -26,18 +27,48 @@ function App() {
       path: "/",
       element: <Layout />,
       children: [
-        { path: "/", element: <Home /> },
-        { path: "/record", element: <Record /> },
-        { path: "/report", element: <Report /> },
-        { path: "/mypage", element: <Mypage /> },
+        {
+          path: "/",
+          element: <Home />,
+          loader: () => {
+            checkAuth();
+            return null;
+          },
+        },
+        {
+          path: "/record",
+          element: <Record />,
+          loader: () => {
+            checkAuth();
+            return null;
+          },
+        },
+        {
+          path: "/report",
+          element: <Report />,
+          loader: () => {
+            checkAuth();
+            return null;
+          },
+        },
+        {
+          path: "/mypage",
+          element: <Mypage />,
+          loader: () => {
+            checkAuth();
+            return null;
+          },
+        },
       ],
     },
     {
       path: "/login",
-      element: <Login />, // ✅ Layout 없이 별도 라우트로
+      element: <Login />,
     },
-    { path: "/signup", 
-      element: <Signup /> },
+    {
+      path: "/signup",
+      element: <Signup />,
+    },
     {
       path: "/select-character",
       element: <SelectAvatar />,
@@ -47,7 +78,9 @@ function App() {
       element: <StartScreen />,
     },
   ]);
+
   if (loading) return <Splash />;
+
   return (
     <div>
       <RouterProvider router={router} />
