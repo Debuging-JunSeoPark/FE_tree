@@ -168,7 +168,9 @@ function QuestionList({
             {isSelected && (
               <div className="px-4 pb-3">
                 {isAnswered ? (
-                  <div>{answers[index]}</div>
+                  <div className="w-full whitespace-pre-wrap break-words overflow-y-auto">
+                    {answers[index]}
+                  </div>
                 ) : (
                   <>
                     <textarea
