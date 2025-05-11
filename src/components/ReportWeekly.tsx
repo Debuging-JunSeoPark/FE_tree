@@ -62,7 +62,7 @@ function ReportWeekly() {
         res.diaries.forEach((diary) => {
           const dayName = getDayNameFromDate(new Date(diary.createdAt));
           dayMap[dayName] = Math.min(dayMap[dayName] + 1, 3);
-        
+
           try {
             const parsed = JSON.parse(diary.diary);
             if (parsed.content) diaryTexts.push(parsed.content);
@@ -90,13 +90,14 @@ function ReportWeekly() {
 
 
   return (
-    <div className="px-1 py-6 font-PRegular">
+    <div className="px-1 pt-0 pb-6 font-PRegular">
       <h2
-        className="text-2xl font-PBold mb-2 text-center cursor-pointer"
-        onClick={() => setShowCalendar(!showCalendar)}
-      >
-        {formatWeekKey(selectedDate)}
-      </h2>
+  className="text-lg font-PBold text-center mt-0 mb-2 cursor-pointer"
+  onClick={() => setShowCalendar(!showCalendar)}
+>
+  {formatWeekKey(selectedDate)}
+</h2>
+
 
       {showCalendar && (
         <div className="flex justify-center mb-4">
