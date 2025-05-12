@@ -20,8 +20,8 @@ function TreeTrunk({
   const centerX = baseWidth * 0.5;
   const centerY = baseWidth * 0.4;
 
-  const [colors, setColors] = useState<string[]>(COLOR_MAP.GREEN);
-  const [avatar, setAvatar] = useState<string>("GREEN");
+  const [colors, setColors] = useState<string[] | null>(null);
+  const [avatar, setAvatar] = useState<string>("");
 
   // 사용자 프로필에서 아바타 색상 불러오기
   useEffect(() => {
@@ -29,7 +29,8 @@ function TreeTrunk({
       try {
         const user = await getUserProfile();
         const colorSet = COLOR_MAP[user.avatar as keyof typeof COLOR_MAP];
-        setColors(colorSet || COLOR_MAP.GREEN);
+        if (!colorSet) throw new Error("Unknown avatar color");
+        setColors(colorSet);
         setAvatar(user.avatar);
       } catch (error) {
         console.error("유저 정보 불러오기 실패", error);
@@ -38,6 +39,7 @@ function TreeTrunk({
     fetchUserProfile();
   }, []);
 
+  const safeColors = colors ?? []; // ❗ 항상 훅은 조건문 밖에서 실행
   const circleCount = answeredCount;
 
   const circles = useMemo(() => {
@@ -75,7 +77,7 @@ function TreeTrunk({
           xPercent: (x / baseWidth) * 100,
           yPercent: (y / baseWidth) * 100,
           sizePx: size,
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color: safeColors[Math.floor(Math.random() * safeColors.length)] || "#CCC",
           delay: Math.random() * 2,
         });
       }
@@ -84,13 +86,22 @@ function TreeTrunk({
     }
 
     return newCircles;
-  }, [circleCount, colors]);
+  }, [circleCount, safeColors]);
 
   const labelColor = {
     GREEN: "text-green-600",
     YELLOW: "text-yellow-500",
     PINK: "text-pink-400",
   };
+
+  // ✅ 이후 조건부 렌더링으로 처리
+  if (!colors) {
+    return (
+      <div className="w-full h-[270px] flex items-center justify-center">
+        <span className="text-gray-400 text-sm">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center gap-2 w-full rounded-xl px-4">
@@ -123,7 +134,11 @@ function TreeTrunk({
       </div>
       <span className="flex flex-col items-end justify-end w-full px-2">
         <div className="font-PLight text-xs">Monthly Progress Visual</div>
-        <div className={`font-PExtraBold text-base ${labelColor[avatar as keyof typeof labelColor]}`}>
+        <div
+          className={`font-PExtraBold text-base ${
+            labelColor[avatar as keyof typeof labelColor] || "text-gray-500"
+          }`}
+        >
           {answeredCount}/{totalCount} answered
         </div>
       </span>

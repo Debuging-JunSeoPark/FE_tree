@@ -18,15 +18,15 @@ function Login() {
       toast.error("Please enter both email and password.");
       return;
     }
-  
+
     try {
       const res = await postLogin({ email, password });
       toast.success("Login successful!");
-  
+
       // Store tokens in cookies (valid for 1 day)
       Cookies.set("accessToken", res.token, { expires: 1 });
       Cookies.set("userId", res.id.toString());
-  
+
       if (res.profileComplete) {
         navigate("/");
       } else {
@@ -62,7 +62,7 @@ function Login() {
         />
         Log in with Google
       </button>
-
+      {/*
       <button className="w-full flex items-center justify-center gap-2 bg-[#1877F2] text-white py-2 rounded-lg my-2 shadow-sm">
         <img
           src="https://www.svgrepo.com/show/452196/facebook-1.svg"
@@ -71,6 +71,8 @@ function Login() {
         />
         Log in with Facebook
       </button>
+      */}
+
 
       <p className="text-[#87CEAB] text-sm mt-4 mb-2 font-medium">
         OR LOG IN WITH EMAIL

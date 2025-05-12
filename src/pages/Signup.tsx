@@ -47,7 +47,7 @@ function Signup() {
         toast.error("Please enter both your email and verification code.");
         return;
       }
-  
+
       await postVerifyEmailCode({ email, code });
       toast.success("Email verification completed successfully.");
     } catch (error) {
@@ -55,34 +55,34 @@ function Signup() {
       console.error("Email verification failed", error);
     }
   };
-  
+
   const handleSignup = async () => {
     if (!email || !code || !password || !confirmPassword) {
       toast.error("Please fill in all the required fields.");
       return;
     }
-  
+
     if (!email.includes("@")) {
       toast.error("Please enter a valid email address (must include '@').");
       return;
     }
-  
+
     if (password.length < 6) {
       toast.error("Password must be at least 6 characters long.");
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setPasswordMismatch(true);
       toast.error("Passwords do not match.");
       return;
     }
-  
+
     if (!agreed) {
       toast.error("Please agree to the privacy policy.");
       return;
     }
-  
+
     try {
       await postVerifiedSignup({ email, code, password });
       toast.success("Sign-up completed successfully.");
@@ -122,7 +122,7 @@ function Signup() {
         />
         Sign in with Google
       </button>
-
+      {/*
       <button className="w-full flex items-center justify-center gap-2 bg-[#1877F2] text-white py-2 rounded-lg mb-4 shadow-sm">
         <img
           src="https://www.svgrepo.com/show/452196/facebook-1.svg"
@@ -131,7 +131,7 @@ function Signup() {
         />
         Sign in with Facebook
       </button>
-
+*/}
       {/* 구분선 텍스트 */}
       <p className="text-[#87CEAB] text-sm mb-4 font-medium">
         OR SIGN UP WITH EMAIL
