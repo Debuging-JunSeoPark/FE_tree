@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPeriodDiary, postDiary, putTodayDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
+import toast from "react-hot-toast";
 
 interface QuestionListProps {
   selectedSlot: "Morning" | "Lunch" | "Evening";
@@ -142,8 +143,24 @@ function QuestionList({
         const res = await putTodayDiary(todayDiaryIds[index]!, data);
         console.log(res);
       } else {
-        // 최초 저장
-        await postDiary(data);
+        // selectedDate: 사용자가 선택한 Date 객체 (KST에서 생성되었더라도)
+        const selectedDateUtc = new Date(
+          Date.UTC(
+            selectedDate.getFullYear(),
+            selectedDate.getMonth(),
+            selectedDate.getDate()
+          )
+        );
+        const selectedUtcDateStr = selectedDateUtc.toISOString().slice(0, 10);
+        const nowUtcDateStr = new Date().toISOString().slice(0, 10);
+
+        if (selectedUtcDateStr !== nowUtcDateStr) {
+          toast.error("Only today can be created/modified.");
+          return;
+        } else {
+          // 최초 저장
+          await postDiary(data);
+        }
       }
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
       setEditMode((prev) => prev.map((v, i) => (i === index ? false : v)));
