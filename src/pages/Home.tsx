@@ -32,6 +32,7 @@ function Home() {
         setAvatar(user.avatar);
       } catch (error) {
         console.error("유저 정보 불러오기 실패");
+        throw error;
       }
     };
     userInfo();
@@ -79,9 +80,7 @@ function Home() {
               className="w-10 h-10 rounded-full border-1 border-[#80A94D]"
             />
           )}
-          <div className="font-PBold text-base text-black">
-            {nickname}
-          </div>
+          <div className="font-PBold text-base text-black">{nickname}</div>
         </div>
       </div>
 

@@ -20,6 +20,16 @@ type Props = {
 function TimeSlotSelector({ selected, setSelected }: Props) {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const timeSlots: {
+    id: number;
+    label: "Morning" | "Lunch" | "Evening";
+  }[] = [
+    { id: 1, label: "Morning" },
+    { id: 2, label: "Lunch" },
+    { id: 3, label: "Evening" },
+  ];
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -35,51 +45,76 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
     fetchUserProfile();
   }, []);
 
+  useEffect(() => {
+    if (!avatar) return;
+
+    const getImageForSlot = (
+      label: "Morning" | "Lunch" | "Evening"
+    ): string | undefined => {
+      if (avatar === "PINK") {
+        return {
+          Morning: cherryMorning,
+          Lunch: cherryLunch,
+          Evening: cherryEvening,
+        }[label];
+      } else if (avatar === "YELLOW") {
+        return {
+          Morning: YellowMorning,
+          Lunch: YellowLunch,
+          Evening: YellowEvening,
+        }[label];
+      } else if (avatar === "GREEN") {
+        return {
+          Morning: treeMorning,
+          Lunch: treeLunch,
+          Evening: treeEvening,
+        }[label];
+      }
+    };
+
+    const slots = ["Morning", "Lunch", "Evening"] as const;
+    const imagesToLoad = slots
+      .map((label) => getImageForSlot(label))
+      .filter((src): src is string => !!src);
+
+    let loaded = 0;
+    imagesToLoad.forEach((src) => {
+      const img = new Image();
+      img.onload = img.onerror = () => {
+        loaded += 1;
+        if (loaded === imagesToLoad.length) {
+          setIsImageLoaded(true); // ✅ 세 장 모두 로딩되었을 때만 렌더링
+        }
+      };
+      img.src = src;
+    });
+  }, [avatar]);
+
   const getImageForSlot = (
     label: "Morning" | "Lunch" | "Evening"
   ): string | undefined => {
     if (avatar === "PINK") {
-      switch (label) {
-        case "Morning":
-          return cherryMorning;
-        case "Lunch":
-          return cherryLunch;
-        case "Evening":
-          return cherryEvening;
-      }
+      return {
+        Morning: cherryMorning,
+        Lunch: cherryLunch,
+        Evening: cherryEvening,
+      }[label];
     } else if (avatar === "YELLOW") {
-      switch (label) {
-        case "Morning":
-          return YellowMorning;
-        case "Lunch":
-          return YellowLunch;
-        case "Evening":
-          return YellowEvening;
-      }
+      return {
+        Morning: YellowMorning,
+        Lunch: YellowLunch,
+        Evening: YellowEvening,
+      }[label];
     } else if (avatar === "GREEN") {
-      switch (label) {
-        case "Morning":
-          return treeMorning;
-        case "Lunch":
-          return treeLunch;
-        case "Evening":
-          return treeEvening;
-      }
+      return {
+        Morning: treeMorning,
+        Lunch: treeLunch,
+        Evening: treeEvening,
+      }[label];
     }
-
-    return undefined; // ✅ 디폴트 없음
   };
 
-  const timeSlots: {
-    id: number;
-    label: "Morning" | "Lunch" | "Evening";
-  }[] = [
-    { id: 1, label: "Morning" },
-    { id: 2, label: "Lunch" },
-    { id: 3, label: "Evening" },
-  ];
-
-  if (isLoading || avatar === null) {
+  if (isLoading || avatar === null || !isImageLoaded) {
     return (
       <div className="flex justify-around gap-2 m-2 mt-4 w-full">
         {[1, 2, 3].map((id) => (
@@ -106,7 +141,7 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
               isSelected
                 ? "bg-second border-main shadow-lg"
                 : "bg-white border-gray-100"
-            } font-PRegular text-[10px]`}
+            } font-PRegular text-[10px] cursor-pointer`}
           >
             {imgSrc ? (
               <img
