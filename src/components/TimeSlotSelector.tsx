@@ -35,7 +35,9 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
     fetchUserProfile();
   }, []);
 
-  const getImageForSlot = (label: "Morning" | "Lunch" | "Evening") => {
+  const getImageForSlot = (
+    label: "Morning" | "Lunch" | "Evening"
+  ): string | undefined => {
     if (avatar === "PINK") {
       switch (label) {
         case "Morning":
@@ -54,7 +56,7 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
         case "Evening":
           return YellowEvening;
       }
-    } else {
+    } else if (avatar === "GREEN") {
       switch (label) {
         case "Morning":
           return treeMorning;
@@ -64,6 +66,8 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
           return treeEvening;
       }
     }
+
+    return undefined; // ✅ 디폴트 없음
   };
 
   const timeSlots: {
@@ -76,7 +80,6 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
   ];
 
   if (isLoading || avatar === null) {
-    // ✅ 로딩 중일 때 스켈레톤 스타일 박스
     return (
       <div className="flex justify-around gap-2 m-2 mt-4 w-full">
         {[1, 2, 3].map((id) => (
@@ -93,6 +96,8 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
     <div className="flex flex-row items-center justify-around gap-2 m-2 mt-4">
       {timeSlots.map((slot) => {
         const isSelected = selected === slot.label;
+        const imgSrc = getImageForSlot(slot.label);
+
         return (
           <div
             key={slot.id}
@@ -103,11 +108,15 @@ function TimeSlotSelector({ selected, setSelected }: Props) {
                 : "bg-white border-gray-100"
             } font-PRegular text-[10px]`}
           >
-            <img
-              src={getImageForSlot(slot.label)}
-              alt={slot.label}
-              className="rounded-full w-12 h-12"
-            />
+            {imgSrc ? (
+              <img
+                src={imgSrc}
+                alt={slot.label}
+                className="rounded-full w-12 h-12"
+              />
+            ) : (
+              <div className="rounded-full w-12 h-12 bg-gray-100" />
+            )}
             <div className="mt-1">{slot.label}</div>
           </div>
         );

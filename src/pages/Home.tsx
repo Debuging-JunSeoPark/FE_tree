@@ -12,7 +12,7 @@ function Home() {
   const [avatar, setAvatar] = useState<string>("");
   const [answeredCount, setAnsweredCount] = useState<number>(0);
 
-  const getAvatarImage = (avatar: string | null): string => {
+  const getAvatarImage = (avatar: string | null): string | undefined => {
     switch (avatar) {
       case "GREEN":
         return greenIcon;
@@ -20,9 +20,8 @@ function Home() {
         return yellowIcon;
       case "PINK":
         return pinkIcon;
-      default:
-        return greenIcon;
     }
+    return undefined; // 디폴트 제거
   };
 
   useEffect(() => {
@@ -73,11 +72,13 @@ function Home() {
       {/* 유저 정보 카드 */}
       <div className="flex flex-row items-center justify-start w-full max-w-[25rem] p-3 gap-2 min-h-[3.625rem] rounded-xl border-2 border-homeBorder bg-white mt-2 shadow-md">
         <div className="flex flex-row items-center gap-3">
-          <img
-            src={getAvatarImage(avatar)}
-            alt="아이콘"
-            className="w-10 h-10 rounded-full border-1 border-[#80A94D]"
-          />
+          {getAvatarImage(avatar) && (
+            <img
+              src={getAvatarImage(avatar)}
+              alt="아이콘"
+              className="w-10 h-10 rounded-full border-1 border-[#80A94D]"
+            />
+          )}
           <div className="font-PBold text-base text-black">
             {nickname}
           </div>
