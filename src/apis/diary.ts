@@ -1,4 +1,5 @@
 import {
+  DiaryItem,
   DiaryListResponse,
   DiaryResponse,
   DiaryResponseList,
@@ -47,6 +48,22 @@ export const getPeriodDiary = async (
     return response.data;
   } catch (error) {
     console.error("기간별 일기 조회 실패", error);
+    throw error;
+  }
+};
+
+export const putTodayDiary = async (
+  diaryId: number,
+  data: PostDiaryRequest
+): Promise<DiaryItem> => {
+  try {
+    const response = await instance.put<DiaryItem>(
+      `/api/diary/${diaryId}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("일기 수정 실패", error);
     throw error;
   }
 };
