@@ -6,7 +6,7 @@ import QuestionList from "../components/QuestionList";
 function Record() {
   const getTimeSlotByUTC = (): "Morning" | "Lunch" | "Evening" => {
     const hour = new Date().getUTCHours();
-    if (hour >= 5 && hour < 12) return "Morning";
+    if (hour >= 0 && hour < 12) return "Morning";
     if (hour >= 12 && hour < 18) return "Lunch";
     return "Evening";
   };
