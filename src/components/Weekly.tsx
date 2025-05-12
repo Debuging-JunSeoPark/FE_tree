@@ -16,7 +16,7 @@ interface WeeklyProps {
 
 function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [avatar, setAvatar] = useState<string>("GREEN");
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -43,9 +43,11 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
   });
 
   const getSelectedIcon = () => {
+    if (!avatar) return null;
     if (avatar === "PINK") return cicon;
     if (avatar === "YELLOW") return yicon;
-    return icon;
+    if (avatar === "GREEN") return icon;
+    return null;
   };
 
   return (
@@ -90,7 +92,15 @@ function Weekly({ selectedDate, setSelectedDate }: WeeklyProps) {
             <div>{day.label}</div>
             <div className="flex items-center justify-center rounded-full w-8 h-8">
               {day.isSelected ? (
-                <img src={getSelectedIcon()} alt="selected" className="rounded-full" />
+                getSelectedIcon() ? (
+                  <img
+                    src={getSelectedIcon()!}
+                    alt="selected"
+                    className="rounded-full"
+                  />
+                ) : (
+                  <div className="bg-gray-300 w-full h-full rounded-full" />
+                )
               ) : (
                 <div className="bg-[#d9d9d9] text-white w-full h-full flex items-center justify-center rounded-full text-sm">
                   {day.date}
