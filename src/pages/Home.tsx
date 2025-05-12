@@ -69,7 +69,9 @@ function Home() {
   const totalCount = getDaysInMonth(new Date()) * 3;
 
   return (
-    <div className="flex flex-col gap-4 w-full px-4 pt-4 pb-32">
+    <div className="flex flex-col gap-4 w-full px-4 pt-4 pb-4">
+
+
       {/* 유저 정보 카드 */}
       <div className="flex flex-row items-center justify-start w-full max-w-[25rem] p-3 gap-2 min-h-[3.625rem] rounded-xl border-2 border-homeBorder bg-white mt-2 shadow-md">
         <div className="flex flex-row items-center gap-3">
