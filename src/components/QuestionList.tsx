@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { getPeriodDiary, postDiary } from "../apis/diary";
+import { getPeriodDiary, postDiary, putTodayDiary } from "../apis/diary";
 import { DiaryContent, QType } from "../apis/diary.type";
+import toast from "react-hot-toast";
 
 interface QuestionListProps {
   selectedSlot: "Morning" | "Lunch" | "Evening";
@@ -44,6 +45,12 @@ function QuestionList({
   const [submitted, setSubmitted] = useState<boolean[]>(
     new Array(3).fill(false)
   );
+  const [editMode, setEditMode] = useState<boolean[]>([false, false, false]);
+  const [todayDiaryIds, setTodayDiaryIds] = useState<(number | null)[]>([
+    null,
+    null,
+    null,
+  ]);
 
   useEffect(() => {
     setSelectedIndex(getIndexBySlot(selectedSlot));
@@ -53,6 +60,7 @@ function QuestionList({
     const fetchAnswers = async () => {
       const filledAnswers = new Array(3).fill("");
       const filledSubmitted = new Array(3).fill(false);
+      const filledDiaryIds = new Array(3).fill(null);
 
       // UTC 기준 자정부터 하루 끝까지 설정
       const localDate = new Date(
@@ -69,12 +77,15 @@ function QuestionList({
       );
       const end = new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1);
 
+      // 오늘(UTC) 날짜 문자열
+      const nowUtc = new Date();
+      const currentUtcDateStr = nowUtc.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
       try {
         const response = await getPeriodDiary(
           start.toISOString(),
           end.toISOString()
         );
-        console.log("답변 조회 성공", response);
         for (let index = 0; index < 3; index++) {
           const qtype = getQTypeByIndex(index);
           const match = response.diaries.find((entry) => entry.qtype === qtype);
@@ -88,14 +99,20 @@ function QuestionList({
             } catch {
               content = match.diary; // 일반 문자열일 경우
             }
-
             filledAnswers[index] = content;
             filledSubmitted[index] = true;
+
+            // createdAt이 오늘(UTC)과 같으면 diaryId 저장
+            const createdAtDateStr = match.createdAt.slice(0, 10);
+            if (createdAtDateStr === currentUtcDateStr) {
+              filledDiaryIds[index] = match.diaryId;
+            }
           }
         }
-
         setAnswers(filledAnswers);
         setSubmitted(filledSubmitted);
+        setTodayDiaryIds(filledDiaryIds);
+        setEditMode([false, false, false]); // 날짜 바뀌면 수정모드 해제
       } catch (error) {
         console.error("답변 조회 실패", error);
       }
@@ -111,21 +128,51 @@ function QuestionList({
   };
 
   const handleSave = async (index: number) => {
-    if (submitted[index]) return;
     try {
       const diaryContent: DiaryContent = {
         content: answers[index],
       };
 
-      await postDiary({
+      const data = {
         qtype: getQTypeByIndex(index),
         diary: JSON.stringify(diaryContent),
-      });
+      };
 
+      if (submitted[index] && todayDiaryIds[index]) {
+        // 수정
+        const res = await putTodayDiary(todayDiaryIds[index]!, data);
+        console.log(res);
+      } else {
+        // selectedDate: 사용자가 선택한 Date 객체 (KST에서 생성되었더라도)
+        const selectedDateUtc = new Date(
+          Date.UTC(
+            selectedDate.getFullYear(),
+            selectedDate.getMonth(),
+            selectedDate.getDate()
+          )
+        );
+        const selectedUtcDateStr = selectedDateUtc.toISOString().slice(0, 10);
+        const nowUtcDateStr = new Date().toISOString().slice(0, 10);
+
+        if (selectedUtcDateStr !== nowUtcDateStr) {
+          toast.error("Only today can be created/modified.");
+          return;
+        } else {
+          // 최초 저장
+          await postDiary(data);
+        }
+      }
       setSubmitted((prev) => prev.map((v, i) => (i === index ? true : v)));
+      setEditMode((prev) => prev.map((v, i) => (i === index ? false : v)));
+      // fetchAnswers(); // 필요시 새로고침
     } catch (error) {
-      console.error("답변 전송 실패", error);
+      console.error("답변 전송/수정 실패", error);
     }
+  };
+
+  const handleEdit = (index: number) => {
+    setEditMode((prev) => prev.map((_, i) => (i === index ? true : false)));
+    setSelectedIndex(index);
   };
 
   const handleChange = (index: number, value: string) => {
@@ -139,6 +186,7 @@ function QuestionList({
       {questions.map((question, index) => {
         const isSelected = selectedIndex === index;
         const isAnswered = submitted[index];
+        const isTodayDiary = todayDiaryIds[index] !== null;
 
         return (
           <div
@@ -167,9 +215,32 @@ function QuestionList({
 
             {isSelected && (
               <div className="px-4 pb-3">
-                {isAnswered ? (
-                  <div className="w-full whitespace-pre-wrap break-words overflow-y-auto">
-                    {answers[index]}
+                {isAnswered && isTodayDiary && editMode[index] ? (
+                  <>
+                    <textarea
+                      className="w-full h-24 p-2 border border-gray-300 rounded text-sm resize-none"
+                      placeholder="Edit your answer..."
+                      value={answers[index]}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                    />
+                    <button
+                      onClick={() => handleSave(index)}
+                      className="w-full h-10 rounded text-white bg-main font-PSemiBold text-sm"
+                    >
+                      Save
+                    </button>
+                  </>
+                ) : isAnswered ? (
+                  <div className="w-full whitespace-pre-wrap break-words overflow-y-auto flex flex-row items-center">
+                    <span className="flex-1">{answers[index]}</span>
+                    {isTodayDiary && (
+                      <button
+                        onClick={() => handleEdit(index)}
+                        className="ml-2 px-3 py-1 rounded bg-main text-white font-PSemiBold text-sm"
+                      >
+                        Modify
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <>
