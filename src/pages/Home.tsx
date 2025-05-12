@@ -79,7 +79,7 @@ function Home() {
             className="w-10 h-10 rounded-full border-1 border-[#80A94D]"
           />
           <div className="font-PBold text-base text-black">
-            {nickname || "Your Nickname"}
+            {nickname}
           </div>
         </div>
       </div>

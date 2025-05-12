@@ -12,14 +12,14 @@ import { getPeriodDiary } from "../apis/diary";
 import { getStartAndEndOfWeek } from "../utils/getStartAndEndOfWeek";
 import { formatWeekKey } from "../utils/formatWeekKey";
 
-const dayKeys = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
+const dayKeys = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"] as const;
 type DayKey = (typeof dayKeys)[number];
 
 function ReportWeekly() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [weeklyData, setWeeklyData] = useState<Record<DayKey, number>>({
-    Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0,
+    Su: 0, Mo: 0, Tu: 0, We: 0, Th: 0, Fr: 0, Sa: 0,
   });
   const [wordData, setWordData] = useState<Word[]>([]);
 
@@ -34,7 +34,9 @@ function ReportWeekly() {
   };
 
   const getDayNameFromDate = (date: Date): DayKey => {
-    const dayIndex = date.getUTCDay();
+    // 한국 시간 (UTC+9) 기준으로 변환
+    const utcPlus9 = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    const dayIndex = utcPlus9.getUTCDay(); // 여전히 UTC 기준 요일 인덱스 사용
     const mondayFirstIndex = (dayIndex + 6) % 7;
     return dayKeys[mondayFirstIndex];
   };
@@ -48,13 +50,14 @@ function ReportWeekly() {
         const res = await getPeriodDiary(start.toISOString(), end.toISOString());
 
         const dayMap: Record<DayKey, number> = {
-          Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0,
+          Su: 0, Mo: 0, Tu: 0, We: 0, Th: 0, Fr: 0, Sa: 0,
         };
         const diaryTexts: string[] = [];
 
         res.diaries.forEach((diary) => {
           const dayName = getDayNameFromDate(new Date(diary.createdAt));
           dayMap[dayName] = Math.min(dayMap[dayName] + 1, 3);
+          
 
           try {
             const parsed = JSON.parse(diary.diary);
@@ -74,7 +77,7 @@ function ReportWeekly() {
         setWordData(extracted);
       } catch (error) {
         console.error("주간 일기 조회 실패", error);
-        setWeeklyData({ Sun: 0, Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0 });
+        setWeeklyData({ Su: 0, Mo: 0, Tu: 0, We: 0, Th: 0, Fr: 0, Sa: 0 });
         setWordData([]);
       }
     };
@@ -105,6 +108,7 @@ function ReportWeekly() {
   onSelect={() => setShowPicker(false)} // ✅ 항상 클릭 시 닫히도록 처리
   calendarStartDay={1}
   dayClassName={(date) => {
+    
     const isToday =
       date.getUTCFullYear() === todayUTC.getUTCFullYear() &&
       date.getUTCMonth() === todayUTC.getUTCMonth() &&

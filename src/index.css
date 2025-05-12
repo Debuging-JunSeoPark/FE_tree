@@ -187,13 +187,7 @@
   color: white !important;
 }
 
-/* 오늘(today) 강조 제거 */
-.react-datepicker__day--today {
-  font-weight: normal !important;
-  background: none !important;
-  color: inherit !important;
-  border: none !important;
-}
+
 
 @keyframes fadeInLetter {
   0% {
