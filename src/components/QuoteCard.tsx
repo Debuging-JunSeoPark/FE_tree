@@ -24,16 +24,18 @@ const QuoteCard = () => {
       }
     }
 
-    const realApi = "https://favqs.com/api/qotd";
+    // ✅ ZenQuotes API 사용
+    const realApi = "https://zenquotes.io/api/today";
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(realApi)}`;
 
     fetch(proxyUrl)
       .then((res) => res.json())
       .then((data) => {
         const parsedData = JSON.parse(data.contents);
+        const quoteData = parsedData[0]; // ZenQuotes는 배열로 옴
         const newQuote: Quote = {
-          content: parsedData.quote.body,
-          author: parsedData.quote.author,
+          content: quoteData.q,
+          author: quoteData.a,
           date: today,
         };
         localStorage.setItem(storageKey, JSON.stringify(newQuote));
@@ -55,6 +57,17 @@ const QuoteCard = () => {
         <>
           <p className="text-sm text-black italic">"{quote.content}"</p>
           <p className="text-xs text-gray-600 text-right">– {quote.author}</p>
+          <p className="text-[6px] text-gray-200 text-right mt-1">
+            Provided by{" "}
+            <a
+              href="https://zenquotes.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              ZenQuotes.io
+            </a>
+          </p>
         </>
       ) : (
         <p className="text-sm text-gray-400">Failed to load quote 😢</p>

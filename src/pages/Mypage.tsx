@@ -10,8 +10,9 @@ function Mypage() {
   const [profile, setProfile] = useState<UserProfile>({
     nickname: "",
     avatar: "GREEN",
+    email: "", // ← 초기값 추가
   });
-  const [email, setEmail] = useState("example@email.com");
+  
   const [showModal, setShowModal] = useState(false);
 
   const fetchProfile = async () => {
@@ -73,7 +74,8 @@ function Mypage() {
         <div className="mt-4 text-lg font-bold text-black">
           {profile.nickname || "nickname"}
         </div>
-        <div className="mt-1 text-sm text-gray-500">{email}</div>
+        <div className="mt-1 text-sm text-gray-500">{profile.email || "example@email.com"}</div>
+
       </div>
 
       <a
