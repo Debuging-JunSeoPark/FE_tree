@@ -32,3 +32,20 @@ export interface DiaryListResponse {
   diaries: DiaryItem[];
   count: number;
 }
+
+
+export interface MonthlyReport {
+  oneLineSummary: string;
+  overview: string;
+  emotionKeywords: string[];
+  emotionSummary: string;
+  riskAnalysis: string;
+  hasMentalHealthRisk: boolean;
+  checkupType: string;
+  recommendationMessage: string;
+  searchQuery: string;
+  recommendations: {
+    title: string;
+    link: string;
+  }[];
+}

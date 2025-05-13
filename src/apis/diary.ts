@@ -4,7 +4,7 @@ import {
   DiaryResponse,
   DiaryResponseList,
   PostDiaryRequest,
-  QType,
+  QType,MonthlyReport,
 } from "./diary.type";
 import instance from "./instance";
 
@@ -67,3 +67,20 @@ export const putTodayDiary = async (
     throw error;
   }
 };
+
+export const getMonthlyReport = async (year: number, month: number): Promise<MonthlyReport> => {
+  const res = await instance.get("/api/report/monthly", {
+    params: { year, month },
+  });
+  return res.data;
+};
+
+export const createMonthlyReport = async (
+  year: number,
+  month: number
+): Promise<MonthlyReport> => {
+  const yearMonth = `${year}-${month.toString().padStart(2, "0")}`; // 예: "2025-05"
+  const response = await instance.post("/api/report/monthly", null, {
+    params: { yearMonth },
+  });
+  return response.data;
