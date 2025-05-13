@@ -84,3 +84,4 @@ export const createMonthlyReport = async (
     params: { yearMonth },
   });
   return response.data;
+};
