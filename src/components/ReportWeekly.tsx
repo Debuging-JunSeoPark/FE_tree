@@ -189,7 +189,7 @@ function ReportWeekly() {
                     {wordData.length === 0 ? (
                       <p className="text-gray-400 text-sm italic">No diary entries this week.</p>
                     ) : (
-                      <WordCloud words={wordData} width={600} height={200} />
+                      <WordCloud words={wordData} width={1000} height={500} />
                     )}
                   </div>
                 </div>

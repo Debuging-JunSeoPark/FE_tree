@@ -161,9 +161,9 @@ function ReportMonthly() {
                   {MONTH_NAMES[month - 1]}
                 </h3>
 
-                <div className="grid grid-cols-7 gap-[1px] text-[9px]">
+                <div className="grid grid-cols-7 gap-[2px] text-[9px]">
                   {Array.from({ length: offset }).map((_, i) => (
-                    <div key={`empty-${i}`} className="w-5 h-5" />
+                    <div key={`empty-${i}`} className="w-6 h-6" />
                   ))}
                   {Array.from({ length: daysInMonth }, (_, d) => {
                     const day = d + 1;
@@ -172,7 +172,7 @@ function ReportMonthly() {
                     return (
                       <div
                         key={day}
-                        className={`w-5 h-5 rounded flex items-center justify-center ${className}`}
+                        className={`w-6 h-6 rounded flex items-center justify-center ${className}`}
                       >
                         {day}
                       </div>
@@ -185,10 +185,9 @@ function ReportMonthly() {
                     onClick={() => handleReportClick(month)}
                     disabled={!reportAvailable[month]}
                     className={`text-[9px] px-2 py-[2px] rounded shadow transition
-                      ${
-                        reportAvailable[month]
-                          ? "bg-green-600 text-white hover:bg-green-700"
-                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      ${reportAvailable[month]
+                        ? "bg-green-600 text-white hover:bg-green-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
                   >
                     Report
@@ -202,9 +201,9 @@ function ReportMonthly() {
 
       {selectedReport && selectedMonth !== null && (
         <ReportModal
-  onClose={() => setSelectedReport(null)}
-  report={selectedReport}
-/>
+          onClose={() => setSelectedReport(null)}
+          report={selectedReport}
+        />
       )}
     </div>
   );
