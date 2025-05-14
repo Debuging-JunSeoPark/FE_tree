@@ -46,6 +46,11 @@ function Login() {
       }
     }
   };
+  const googleLogin = () => {
+    console.log("Google 로그인 시도 중...");
+    const baseURL = import.meta.env.VITE_API_URL;
+    window.location.href = `${baseURL}/oauth2/authorize/google`;
+  };
 
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
@@ -54,7 +59,10 @@ function Login() {
       <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
 
       {/* 소셜 로그인 버튼 */}
-      <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg my-2 shadow-sm">
+      <button
+        onClick={googleLogin}
+        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg my-2 shadow-sm"
+      >
         <img
           src="https://www.svgrepo.com/show/355037/google.svg"
           alt="Google"
@@ -72,7 +80,6 @@ function Login() {
         Log in with Facebook
       </button>
       */}
-
 
       <p className="text-[#87CEAB] text-sm mt-4 mb-2 font-medium">
         OR LOG IN WITH EMAIL

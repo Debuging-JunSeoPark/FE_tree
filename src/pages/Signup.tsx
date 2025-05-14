@@ -2,7 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import logo from "../assets/images/logoGreen.svg";
 import GetStartedButton from "../components/GetStartedButton";
-import { postCheckEmail, postVerifyEmailCode, postVerifiedSignup } from "../apis/auth";
+import {
+  postCheckEmail,
+  postVerifyEmailCode,
+  postVerifiedSignup,
+} from "../apis/auth";
 import Header from "../components/Header";
 import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 import toast from "react-hot-toast";
@@ -39,7 +43,6 @@ function Signup() {
       setEmailSent(false);
     }
   };
-
 
   const handleVerifyCode = async () => {
     try {
@@ -99,22 +102,25 @@ function Signup() {
     }
   };
 
-
+  const googleLogin = () => {
+    console.log("Google 로그인 시도 중...");
+    const baseURL = import.meta.env.VITE_API_URL;
+    window.location.href = `${baseURL}/oauth2/authorize/google`;
+  };
   return (
     <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
       {/* 상단 바 */}
       <Header title="Sign Up" showLogo={false} />
-      <img
-        src={logo}
-        alt="tree logo"
-        className="w-24 h-auto mt-20 mb-4"
-      />
+      <img src={logo} alt="tree logo" className="w-24 h-auto mt-20 mb-4" />
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         Create your account
       </h2>
 
       {/* 소셜 로그인 */}
-      <button className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg mb-2 shadow-sm">
+      <button
+        onClick={googleLogin}
+        className="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 py-2 rounded-lg mb-2 shadow-sm"
+      >
         <img
           src="https://www.svgrepo.com/show/355037/google.svg"
           alt="Google"
@@ -205,8 +211,9 @@ function Signup() {
             if (passwordMismatch) setPasswordMismatch(false); // 입력 중이면 리셋
           }}
           placeholder="password"
-          className={`w-full rounded-lg p-2 mt-1 border ${passwordMismatch ? "border-red-500" : "border-gray-300"
-            }`}
+          className={`w-full rounded-lg p-2 mt-1 border ${
+            passwordMismatch ? "border-red-500" : "border-gray-300"
+          }`}
         />
       </div>
 
@@ -230,11 +237,16 @@ function Signup() {
       </div>
 
       {/* 모달 렌더링 */}
-      {showPolicy && <PrivacyPolicyModal onClose={() => setShowPolicy(false)} />}
+      {showPolicy && (
+        <PrivacyPolicyModal onClose={() => setShowPolicy(false)} />
+      )}
 
       {/* 가입 버튼 */}
-      <GetStartedButton label="GET STARTED" className="w-full" onClick={handleSignup} />
-
+      <GetStartedButton
+        label="GET STARTED"
+        className="w-full"
+        onClick={handleSignup}
+      />
     </div>
   );
 }
