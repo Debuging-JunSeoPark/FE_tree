@@ -10,7 +10,7 @@ import Splash from "./pages/Splash";
 import StartScreen from "./pages/StartScreen";
 import Signup from "./pages/Signup";
 import { useEffect, useState } from "react";
-import { checkAuth } from "./utils/auth"; 
+import { checkAuth } from "./utils/auth";
 import { Toaster } from "react-hot-toast";
 import Notifications from "./pages/Notifications";
 
@@ -69,24 +69,23 @@ function App() {
             return null;
           },
         },
-
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/signup",
+          element: <Signup />,
+        },
+        {
+          path: "/select-character",
+          element: <SelectAvatar />,
+        },
+        {
+          path: "/start",
+          element: <StartScreen />,
+        },
       ],
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/signup",
-      element: <Signup />,
-    },
-    {
-      path: "/select-character",
-      element: <SelectAvatar />,
-    },
-    {
-      path: "/start",
-      element: <StartScreen />,
     },
   ]);
 
@@ -94,24 +93,24 @@ function App() {
 
   return (
     <div>
-       <Toaster
-  position="top-center"
-  toastOptions={{
-    duration: 3000,
-    success: {
-      style: {
-        background: "#E6F4EA",
-        color: "#0F9D58",
-      },
-    },
-    error: {
-      style: {
-        background: "#FDEAEA",
-        color: "#D93025",
-      },
-    },
-  }}
-/>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          success: {
+            style: {
+              background: "#E6F4EA",
+              color: "#0F9D58",
+            },
+          },
+          error: {
+            style: {
+              background: "#FDEAEA",
+              color: "#D93025",
+            },
+          },
+        }}
+      />
       <RouterProvider router={router} />
     </div>
   );
