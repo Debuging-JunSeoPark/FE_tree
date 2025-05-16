@@ -5,7 +5,7 @@ import { VscBell } from "react-icons/vsc";
 
 function Layout() {
   const location = useLocation();
-  const hideNav = ["/login", "/signup", "/select-avatar", "/start"].includes(
+  const hideNav = ["/login", "/signup", "/select-character", "/start"].includes(
     location.pathname
   );
   const showNav = !hideNav;
