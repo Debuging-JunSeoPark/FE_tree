@@ -100,7 +100,7 @@ function SelectAvatar() {
           <input
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
-            className="border border-[#E3E5E5] w-85 h-12 rounded-lg p-4"
+            className="border border-[#E3E5E5] h-12 rounded-lg p-4"
           ></input>
         </div>
         <GetStartedButton onClick={handleSubmit} />
