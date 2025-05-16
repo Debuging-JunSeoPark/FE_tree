@@ -1,15 +1,17 @@
 import treeIcon from "../assets/images/treeIcon.svg";
 import forcyIcon from "../assets/images/forsythiaIcon.svg";
 import blossomIcon from "../assets/images/cherryBlossomIcon.svg";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import GetStartedButton from "../components/GetStartedButton";
 import Header from "../components/Header";
 import { putUserProfile } from "../apis/user";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 function SelectAvatar() {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [selectedAvatar, setSelectedAvatar] = useState<number | null>(null);
   const [nickname, setNickname] = useState<string>("");
 
@@ -25,6 +27,19 @@ function SelectAvatar() {
         return "GREEN";
     }
   };
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("token");
+
+    if (token) {
+      Cookies.set("accessToken", token, { expires: 1 }); // 1일 동안 유효
+      toast.success("구글 로그인 성공!");
+    } else {
+      toast.error("토큰이 없어 로그인에 실패했어요.");
+      navigate("/login");
+    }
+  }, [location, navigate]);
+
   const handleSubmit = async () => {
     if (selectedAvatar === null || nickname === "") {
       alert("Please select an avatar and enter a nickname.");

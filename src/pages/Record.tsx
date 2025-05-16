@@ -24,7 +24,7 @@ function Record() {
   const [selectedDate, setSelectedDate] = useState(getUTCDate());
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 px-4">
       <Weekly selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
       <TimeSlotSelector selected={selected} setSelected={setSelected} />
       <div className="flex flex-col">

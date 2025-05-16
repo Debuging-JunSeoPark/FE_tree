@@ -53,7 +53,7 @@ function Login() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
+    <div className="w-full flex flex-col items-center justify-start px-6 py-8 bg-white">
       <Header title="Log In" showLogo={false} />
       <img src={logo} alt="tree logo" className="w-24 h-auto mt-20 mb-4" />
       <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome Back!</h2>

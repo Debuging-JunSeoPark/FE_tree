@@ -101,14 +101,13 @@ function Signup() {
       }
     }
   };
-
   const googleLogin = () => {
     console.log("Google 로그인 시도 중...");
     const baseURL = import.meta.env.VITE_API_URL;
     window.location.href = `${baseURL}/oauth2/authorize/google`;
   };
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-start px-6 py-8 bg-white">
+    <div className="w-full flex flex-col items-center justify-start px-6 py-8 bg-white">
       {/* 상단 바 */}
       <Header title="Sign Up" showLogo={false} />
       <img src={logo} alt="tree logo" className="w-24 h-auto mt-20 mb-4" />
@@ -145,50 +144,50 @@ function Signup() {
 
       {/* 이메일 + 요청 버튼 */}
       <div className="w-full mb-4">
-       <div className="w-full mb-4">
-  <label className="text-sm text-gray-600 font-Pretendard block mb-1">
-    Email
-  </label>
-  <div className="flex items-center gap-2 w-full overflow-hidden">
-    <input
-      type="email"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      placeholder="you@example.com"
-      className="flex-grow min-w-0 p-2 border border-gray-300 rounded-lg px-4 font-Pretendard"
-    />
-    <button
-      onClick={handleEmailRequest}
-      className="whitespace-nowrap px-4 py-3 bg-[#87CEAB] hover:bg-[#0F9D58] focus:bg-[#0F9D58] text-white rounded-lg text-sm font-semibold font-Pretendard transition-colors"
-    >
-      Request
-    </button>
-  </div>
-</div>
+        <div className="w-full mb-4">
+          <label className="text-sm text-gray-600 font-Pretendard block mb-1">
+            Email
+          </label>
+          <div className="flex items-center gap-2 w-full overflow-hidden">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="flex-grow min-w-0 p-2 border border-gray-300 rounded-lg px-4 font-Pretendard"
+            />
+            <button
+              onClick={handleEmailRequest}
+              className="whitespace-nowrap px-4 py-3 bg-[#87CEAB] hover:bg-[#0F9D58] focus:bg-[#0F9D58] text-white rounded-lg text-sm font-semibold font-Pretendard transition-colors"
+            >
+              Request
+            </button>
+          </div>
+        </div>
       </div>
       {/* 이메일 인증  */}
       {emailSent && (
-  <div className="w-full mb-4">
-    <label className="text-sm text-gray-600 font-Pretendard block mb-1">
-      Verification Code
-    </label>
-    <div className="flex items-center gap-2 w-full overflow-hidden">
-      <input
-        type="text"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        placeholder="123456"
-        className="flex-grow min-w-0 p-2 border border-gray-300 rounded-lg px-4 font-Pretendard"
-      />
-      <button
-        onClick={handleVerifyCode}
-        className="whitespace-nowrap px-3 py-3 bg-[#87CEAB] hover:bg-[#0F9D58] focus:bg-[#0F9D58] text-white rounded-lg text-sm font-semibold font-Pretendard transition-colors"
-      >
-        Verify
-      </button>
-    </div>
-  </div>
-)}
+        <div className="w-full mb-4">
+          <label className="text-sm text-gray-600 font-Pretendard block mb-1">
+            Verification Code
+          </label>
+          <div className="flex items-center gap-2 w-full overflow-hidden">
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="123456"
+              className="flex-grow min-w-0 p-2 border border-gray-300 rounded-lg px-4 font-Pretendard"
+            />
+            <button
+              onClick={handleVerifyCode}
+              className="whitespace-nowrap px-3 py-3 bg-[#87CEAB] hover:bg-[#0F9D58] focus:bg-[#0F9D58] text-white rounded-lg text-sm font-semibold font-Pretendard transition-colors"
+            >
+              Verify
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 비밀번호 입력 */}
       <div className="w-full mb-3">
@@ -213,8 +212,9 @@ function Signup() {
             if (passwordMismatch) setPasswordMismatch(false); // 입력 중이면 리셋
           }}
           placeholder="password"
-          className={`w-full rounded-lg p-2 mt-1 border ${passwordMismatch ? "border-red-500" : "border-gray-300"
-            }`}
+          className={`w-full rounded-lg p-2 mt-1 border ${
+            passwordMismatch ? "border-red-500" : "border-gray-300"
+          }`}
         />
       </div>
 
