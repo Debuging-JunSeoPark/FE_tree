@@ -123,8 +123,8 @@ tree
 │   ├── ReportModal.tsx
 │   ├── ReportMonthly.tsx
 │   ├── ReportWeekly.tsx
-│   ├── WordCloud.tsx
-│   └── ... (기타 UI 컴포넌트)
+│   └── WordCloud.tsx
+│  
 ├── layout/                       # 레이아웃 컴포넌트
 │   └── Layout.tsx
 ├── navigator/                    # 네비게이션 UI
@@ -133,15 +133,15 @@ tree
 │   ├── Home.tsx
 │   ├── Login.tsx
 │   ├── Mypage.tsx
-│   ├── Report.tsx
-│   └── ... (기타 페이지)
+│   └── Report.tsx
+│   
 ├── types/                        # 커스텀 타입 선언
 │   ├── swiper-css.d.ts
 │   └── wordcloud.d.ts
 ├── utils/                        # 유틸리티 함수
 │   ├── extractWordFrequency.ts
-│   ├── getStartAndEndOfWeek.ts
-│   └── ... (기타 유틸)
+│   └── getStartAndEndOfWeek.ts
+│   
 ├── App.tsx                       # 진입점 App 컴포넌트
 ├── index.css                     # 전역 스타일
 ├── main.tsx                      # 엔트리 포인트
